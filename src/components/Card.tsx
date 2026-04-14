@@ -59,7 +59,7 @@ export function GuildCard({ guild, onClick }: GuildCardProps) {
         </h3>
         
         <p className="text-sm text-[rgb(var(--muted))] mb-4">
-          {t(`dashboard.${guild.owner ? "owner" : "admin"}`)}
+          {t(`dashboard.guild.${guild.owner ? "owner" : "admin"}`)}
         </p>
       </div>
     </Card>

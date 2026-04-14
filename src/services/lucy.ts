@@ -3,6 +3,8 @@ import { api } from "./api"
 import type {
   MeResponse,
   GuildResponse,
+  LucyGuildResponse,
+  LangResponse,
 } from "../types/api"
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/"
@@ -43,4 +45,20 @@ export const discordService = {
   guilds: (id: string = "") => 
     api.get<GuildResponse | GuildResponse[]>
       (`${discordService.endpoint}guilds/${param(id)}`),
+}
+
+export const guildService = {
+  endpoint: API_URL + "api/guilds/",
+
+  get: (id: string = "") =>
+    api.get<LucyGuildResponse | LucyGuildResponse[]>
+      (`${guildService.endpoint}${param(id)}`),
+}
+
+export const langService = {
+  endpoint: API_URL + "api/langs/",
+
+  get: () =>
+    api.get<LangResponse[]>
+      (langService.endpoint),
 }

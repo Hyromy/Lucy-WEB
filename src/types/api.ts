@@ -1,3 +1,5 @@
+import { type Language } from "../contexts/Language"
+
 export type MeResponse = {
   authenticated: boolean
   avatar?: string
@@ -14,4 +16,17 @@ export type GuildResponse = {
   name: string
   owner: boolean
   permissions: string
+}
+
+export type LucyGuildResponse = {
+  id: string
+  lang: Language,
+  joined_at: string,
+  updated_at: string,
+  version: number
+}
+
+export type LangResponse = {
+  code: string
+  name: string
 }

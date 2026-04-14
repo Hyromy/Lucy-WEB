@@ -27,8 +27,10 @@ const translations = {
     
     "dashboard.title": "Your Servers",
     "dashboard.description": "Select a guild to manage its configuration.",
-    "dashboard.owner": "Owner",
-    "dashboard.admin": "Admin",
+    "dashboard.guild.owner": "Owner",
+    "dashboard.guild.admin": "Admin",
+    "dashboard.installed.title": "Installed",
+    "dashboard.available.title": "Ready to install",
     
     "manageGuild.info.label": "Information",
     
@@ -50,9 +52,11 @@ const translations = {
     
     "dashboard.title": "Tus servidores",
     "dashboard.description": "Selecciona un servidor para gestionar su configuración.",
-    "dashboard.owner": "Propietario",
-    "dashboard.admin": "Administrador",
-    
+    "dashboard.guild.owner": "Propietario",
+    "dashboard.guild.admin": "Administrador",
+    "dashboard.installed.title": "Instalados",
+    "dashboard.available.title": "Listos para instalar",
+
     "manageGuild.info.label": "Información",
     
     "manageGuild.config.label": "Configuración",
