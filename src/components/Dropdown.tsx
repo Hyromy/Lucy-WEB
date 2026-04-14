@@ -1,92 +1,71 @@
-import { type ReactNode, Children } from "react"
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
+import { type ReactNode } from "react"
+import { ChevronDown } from "lucide-react"
 
-import Icon from "./Icon"
-
-const VALID_ALIGNMENTS = [null, "start", "end"] as const
-type AlignOptions = typeof VALID_ALIGNMENTS[number]
-type DropdownProps = {
-  children: ReactNode
-  options: ReactNode[]
-  align?: AlignOptions
-  disabled?: boolean
+export type DropdownOption<T extends string> = {
+  label: ReactNode
+  triggerLabel?: ReactNode
+  value: T
 }
-export default function Dropdown({
-  children,
+
+export type DropdownProps<T extends string> = {
+  value: T
+  options: DropdownOption<T>[]
+  onChange: (value: T) => void
+  prefix?: ReactNode
+  className?: string
+}
+
+export function Dropdown<T extends string>({
+  value,
   options,
-  align = null,
-  disabled = false
-}: DropdownProps) {
-  if (align && !VALID_ALIGNMENTS.includes(align)) {
-    throw new Error(
-      `Invalid align '${align}' for Dropdown component. Valid alignments are: ${VALID_ALIGNMENTS.filter(v => v != null).join(", ")}`
-    )
-  }
+  onChange,
+  prefix,
+  className = "",
+}: DropdownProps<T>) {
+  const currentOption = options.find((option) => option.value == value)
+  const displayLabel = currentOption?.triggerLabel ?? currentOption?.label
 
-  const alignmentClass = align
-    ? `dropdown-menu-${align}`
-    : ""
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <button
+          type="button"
+          className={`inline-flex items-center gap-2 rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm font-medium transition hover:bg-[rgb(var(--bg))] ${className}`}
+        >
+          <span className="flex items-center gap-2">
+            {prefix} {displayLabel}
+          </span>
 
-  return <div className="dropdown" {...disabled ? { 'aria-disabled': 'true' } : {}}>
-    <button className="btn dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-      {children}
-    </button>
-    <ul className={`dropdown-menu ${alignmentClass}`}>
-      {Children.map(options, (option, index) => {
-        const isDropdownItem = option && typeof option == 'object' && 'type' in option && option.type == DropdownItem
-        const isDropDownDivider = option && typeof option == 'object' && 'type' in option && option.type == DropdownDivider
+          <ChevronDown size={12} className="text-[rgb(var(--muted))] transition-transform data-[state=open]:rotate-180" />
+        </button>
+      </DropdownMenu.Trigger>
 
-        const content = isDropdownItem
-          ? option
-          : isDropDownDivider 
-            ? <DropdownDivider />
-            : <button className="dropdown-item" type="button">
-                {option}
-              </button>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content
+          sideOffset={8}
+          align="end"
+          className="z-50 min-w-44 rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-1 shadow-lg"
+        >
+          {options.map((option) => {
+            const selected = option.value == value
 
-        return <li key={index}>{content}</li>
-      })}
-    </ul>
-  </div>
-}
-
-const VALID_VARIANTS = [null, "primary", "secondary", "danger", "warning", "info", "light", "dark", "link"] as const
-type VariantOptions = typeof VALID_VARIANTS[number]
-type DropdownItemProps = {
-  text: string,
-  icon?: string,
-  variant?: VariantOptions,
-  onclick?: () => void,
-}
-export function DropdownItem({
-  text,
-  icon,
-  variant = null,
-  onclick
-}: DropdownItemProps) {
-  if (variant && !VALID_VARIANTS.includes(variant)) {
-    throw new Error(
-      `Invalid variant '${variant}' for DropdownItem component. Valid variants are: ${VALID_VARIANTS.filter(v => v != null).join(", ")}`
-    )
-  }
-
-  const textContainer = icon
-    ? <span className="ps-2">{text}</span>
-    : text
-
-  const iconElement = icon
-    ? <Icon iconName={icon} />
-    : null
-
-  const variantClass = variant
-    ? `link-${variant}`
-    : ""
-
-  return <button className={`dropdown-item ${variantClass}`} type="button" onClick={onclick}>
-    {iconElement}
-    {textContainer}
-  </button>
-}
-
-export function DropdownDivider() {
-  return <li><hr className="dropdown-divider" /></li>
+            return (
+              <DropdownMenu.Item
+                key={option.value}
+                onSelect={() => onChange(option.value)}
+                className={`cursor-pointer rounded-lg px-3 py-2 text-sm outline-none transition ${
+                  selected
+                    ? "bg-[rgb(var(--primary))] text-[rgb(var(--primary-fg))]"
+                    : "hover:bg-[rgb(var(--bg))]"
+                }`}
+              >
+                {option.label}
+              </DropdownMenu.Item>
+            )
+          })}
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
+  )
 }

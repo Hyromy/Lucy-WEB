@@ -1,36 +1,37 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Route, Routes } from "react-router-dom"
 
-import ProtectedRoute from "./components/ProtectedRoute"
+import { ThemeProvider } from "./contexts/Theme"
+import { LanguageProvider } from "./contexts/Language"
+import { AuthProvider } from "./contexts/Auth"
+import { routes } from "./routes"
+import type { AppRoute } from "./types/appRoute"
 
-import Index from "./pages/Index"
-import Dashboard from "./pages/Dashboard"
-import ManageGuild from "./pages/ManageGuild"
-import AuthCallback from "./pages/AuthCallback"
+function renderRoutes(routeList: AppRoute[]) {
+  return routeList.map((route, index) => {
+    const key = `${route.path ?? "index"}-${index}`
 
-import ThemeProvider from "./context/Theme"
-import AuthProvider from "./context/Auth"
+    if (route.index) {
+      return <Route key={key} index element={route.element} />
+    }
+
+    return (
+      <Route key={key} path={route.path} element={route.element}>
+        {route.children ? renderRoutes(route.children) : null}
+      </Route>
+    )
+  })
+}
 
 export default function App() {
-  const protectedRoutes = [
-    { path: "/dashboard", element: <Dashboard /> },
-    { path: "/dashboard/:id_guild", element: <ManageGuild /> },
-  ]
-
-  return <ThemeProvider>
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {protectedRoutes.map(({path, element}) => {
-            return <Route key={path} path={path} element={
-              <ProtectedRoute>
-                {element}
-              </ProtectedRoute>
-            } />
-          })}
-          <Route path="/auth/callback" element={<AuthCallback />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
-  </ThemeProvider>
+  return (
+    <LanguageProvider>
+      <ThemeProvider>
+        <BrowserRouter>
+          <AuthProvider>
+            <Routes>{renderRoutes(routes)}</Routes>
+          </AuthProvider>
+        </BrowserRouter>
+      </ThemeProvider>
+    </LanguageProvider>
+  )
 }
