@@ -37,6 +37,7 @@ const translations = {
     "manageGuild.info.label": "Information",
     
     "manageGuild.config.label": "Configuration",
+    "manageGuild.config.form.lang": "Bot Language",
   },
   es: {
     "save": "Guardar",
@@ -64,6 +65,7 @@ const translations = {
     "manageGuild.info.label": "Información",
     
     "manageGuild.config.label": "Configuración",
+    "manageGuild.config.form.lang": "Idioma del bot",
   },
 } as const
 

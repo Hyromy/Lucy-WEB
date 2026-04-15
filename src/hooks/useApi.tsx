@@ -58,5 +58,6 @@ export default function useApi<T = ApiData>() {
     error,
     loading,
     request,
+    setData,
   }
 }

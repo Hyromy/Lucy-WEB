@@ -28,3 +28,8 @@ export type LangResponse = {
   code: string
   name: string
 }
+
+export type RedisPayload = {
+  event: string
+  source: string
+}
