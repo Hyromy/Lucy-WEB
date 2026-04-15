@@ -24,54 +24,12 @@ dist-ssr
 *.sw?
 
 .env
+.vscode
 
-# Git
-.git
-.gitignore
-.gitattributes
-
-# Docker
-Dockerfile
-.dockerignore
-docker-compose.yml
-
-# CI/CD
-.github
-.gitlab-ci.yml
-.travis.yml
-azure-pipelines.yml
-
-# Documentation
-README.md
-CHANGELOG.md
+*.md
 LICENSE
+.gitignore
+.env.example
 docs/
-
-# Tests
-tests/
-test/
-*.test.js
-*.test.ts
-*.spec.js
-*.spec.ts
-coverage/
-.nyc_output/
-
-# Cache y temp
-.cache
-.temp
-.tmp
-*.cache
-
-# OS
-Thumbs.db
-desktop.ini
-
-# Build artifacts
-build/
-out/
-
-# Package manager locks alternativos
-yarn.lock
-pnpm-lock.yaml
-bun.lockb
+.github/
+.git/

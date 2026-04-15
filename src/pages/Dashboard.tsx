@@ -1,70 +1,126 @@
-import Nav from "../layout/Nav"
-import Foot from "../layout/Foot"
-
-import { useNavigate } from "react-router-dom"
-
+import Main from "../layouts/Main"
+import NotFound from "./NotFound"
 import { GuildCard } from "../components/Card"
 
-import { useGuilds } from "../hooks/useGuilds"
+import useAuth from "../contexts/Auth"
 
-import { type Guild } from "../services/guildService"
+import useApi from "../hooks/useApi"
+
+import type { GuildResponse, LucyGuildResponse } from "../types/api"
+import { discordService, guildService } from "../services/lucy"
+import { useEffect, useMemo } from "react"
+import useLanguage from "../contexts/Language"
+import { useNavigate } from "react-router-dom"
+import { ROUTES } from "../routes"
+
+const urlBase = import.meta.env.VITE_DISCORD_AUTHORIZE_URL || "https://discord.com/oauth2/authorize"
+const clientID = import.meta.env.VITE_DISCORD_CLIENT_ID || "1337916179485954068"
+const permissions = import.meta.env.VITE_DISCORD_PERMISSIONS || "8"
+const scopes = import.meta.env.VITE_DISCORD_SCOPES || "bot%20applications.commands"
+
+const urlInviteGuild = (guildID: string) => (
+  `${urlBase}?` +
+  `client_id=${clientID}` +
+  `&permissions=${permissions}` +
+  `&scope=${scopes}` +
+  `&guild_id=${guildID}`
+)
+
+type apiResponse = [
+  LucyGuildResponse[],
+  GuildResponse[],
+]
 
 export default function Dashboard() {
-  const { guilds, isLoading } = useGuilds()
+  const { authenticated, loading: loadingAuth } = useAuth()
+  const { data, error, loading: loadingApi, request } = useApi<apiResponse>()
+  const { t } = useLanguage()
   const navigate = useNavigate()
-  
-  const {
-    ok,
-    registered_guilds,
-    ready_to_install_guilds
-  } = guilds
 
-  const installed = registered_guilds?.length > 0
-  ? <section>
-      <h2 className="text-center">Manage</h2>
-      <div className="d-flex flex-wrap gap-3 justify-content-center">
-        {registered_guilds?.map((guild: Guild) => {
-          return <GuildCard
-            key={guild.id}
-            guild={guild}
-            onClick={() => navigate(`/dashboard/${guild.id}`)}
-          />
-        })}
+  const sortGuilds = (guilds: GuildResponse[], installedIDS: Set<string>, isToManage: boolean) => (
+    guilds
+      .filter(g => isToManage ? installedIDS.has(g.id) : !installedIDS.has(g.id))
+      .sort((a, b) => a.name.localeCompare(b.name))
+  )
+
+  useEffect(() => {
+    request(
+      guildService.get(),
+      discordService.guilds(),
+    )
+  }, [])
+
+  useEffect(() => {
+    if (error) {
+      console.error("Error fetching guilds:", error)
+    }
+  }, [error])
+
+  const { manageGuilds, installGuilds } = useMemo(() => {
+    if (!data) return {
+      manageGuilds: [],
+      installGuilds: [],
+    }
+
+    const [lucyGuilds, discordGuilds] = data
+    const installedIDS = new Set(lucyGuilds.map(g => g.id))
+    const manage = sortGuilds(discordGuilds, installedIDS, true)
+    const install = sortGuilds(discordGuilds, installedIDS, false)
+
+    return {
+      manageGuilds: manage,
+      installGuilds: install,
+    }
+  }, [data])
+
+  const renderGuildList = (guilds: GuildResponse[], title: string, addInvite: boolean) => {
+    if (guilds.length == 0) return null
+
+    const onClick = (guild: GuildResponse) => {
+      if (addInvite) {
+        window.open(urlInviteGuild(guild.id), "_blank")
+      } else {
+        navigate(ROUTES.GUILD.ROOT.replace(":id", guild.id))
+      }
+    }
+
+    return (
+      <div>
+        <h2>{title}</h2>
+        <div className="flex flex-wrap justify-center items-stretch gap-3 p-3">
+          {guilds.map((guild) => (
+            <div key={guild.id} className="w-[320px] max-w-full">
+              <GuildCard 
+                guild={guild} 
+                onClick={() => onClick(guild)}
+              />
+            </div>
+          ))}
+        </div>
       </div>
-    </section>
-  : null
+    )
+  }
 
-  const notInstalled = ready_to_install_guilds?.length > 0
-  ? <section>
-      <h2 className="text-center">Install Lucy</h2>
-      <div className="d-flex flex-wrap gap-3 justify-content-center">
-        {ready_to_install_guilds?.map((guild: Guild) => {
-          const inviteUrl = `https://discord.com/api/oauth2/authorize?client_id=1181054632743686195&permissions=8&scope=bot%20applications.commands&guild_id=${guild.id}`
-          return <GuildCard
-            key={guild.id}
-            guild={guild}
-            onClick={() => window.open(inviteUrl, '_blank')}
-          />
-        })}
-      </div>
-    </section>
-  : null
-
-  const content = isLoading
-    ? <p>Loading...</p>
-    : !ok 
-      ? <p>Error loading guilds.</p>
-      : <>
-        {installed}
-        {installed && notInstalled ? <hr /> : null}
-        {notInstalled}
+  const content = loadingApi
+    ? <p className="text-[rgb(var(--muted))]">Loading...</p>
+    : data && (
+      <>
+        {renderGuildList(manageGuilds, t("dashboard.installed.title"), false)}
+        {renderGuildList(installGuilds, t("dashboard.available.title"), true)}
       </>
+    )
 
-  return <>
-    <Nav />
-    <main className="container-xxl py-4">
+  return (!authenticated && !loadingAuth) ? <NotFound /> : (
+    <Main>
+      <header className="mb-10 px-6">
+        <h1 className="text-3xl font-bold text-[rgb(var(--fg))]">
+          {t("dashboard.title")}
+        </h1>
+        <p className="text-[rgb(var(--muted))] mt-2">
+          {t("dashboard.description")}
+        </p>
+      </header>
       {content}
-    </main>
-    <Foot />
-  </>
+    </Main>
+  )
 }

@@ -1,0 +1,48 @@
+@import "tailwindcss";
+:root {
+    --bg: 247 248 251;
+    --fg: 14 20 33;
+    --card: 255 255 255;
+    --muted: 96 110 133;
+    --border: 225 231 240;
+    --primary: 24 117 255;
+    --primary-fg: 255 255 255;
+    
+    --nav-h: 4rem;
+}
+
+.dark {
+    --bg: 9 13 21;
+    --fg: 237 243 252;
+    --card: 17 24 39;
+    --muted: 155 169 190;
+    --border: 44 57 79;
+    --primary: 68 148 255;
+    --primary-fg: 7 14 25;
+}
+
+html,
+body,
+#root {
+    min-height: 100%;
+}
+
+body {
+    background-color: rgb(var(--bg));
+    color: rgb(var(--fg));
+}
+
+@keyframes cursor-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.cursor-blink {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background-color: currentColor;
+    margin-left: 2px;
+    vertical-align: middle;
+    animation: cursor-blink 1s step-end infinite;
+}
