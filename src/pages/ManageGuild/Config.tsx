@@ -1,52 +1,71 @@
 import { useOutletContext } from "react-router-dom"
-import type { GuildResponse } from "../../types/api"
+import type { GuildResponse, LangResponse, LucyGuildResponse } from "../../types/api"
 import useApi from "../../hooks/useApi"
-import { useEffect, useMemo } from "react"
+import { useEffect } from "react"
 import { guildService, langService } from "../../services/lucy"
+import { Form, Select, Option } from "../../components/Form"
+import { Button } from "../../components/Button"
+import useLanguage from "../../contexts/Language"
+
+type ApiResponse = [
+  LucyGuildResponse,
+  LangResponse[],
+]
+
+type FormExpectedData = {
+  lang: string
+}
 
 export default function Config() {
+  const { t } = useLanguage()
   const { 
-    data: dataContext,
-    loading: loadingContext,
-    error: errorContext
+    data: dataContext
   } = useOutletContext<{
     data: GuildResponse | null
     loading: boolean
     error: any
   }>()
-  const {
-    data: dataApi,
-    error: errorApi,
-    loading: loadingApi,
-    request
-  } = useApi()
+
+  const { data: dataApi, error: errorApi, loading: loadingApi, request } = useApi<ApiResponse>()
+  const { error: errorUpdate, request: requestUpdate } = useApi<LucyGuildResponse>()
 
   useEffect(() => {
-    request(
-      guildService.get(dataContext?.id),
-      langService.get(),
-    )
-  }, [])
+    if (dataContext && !loadingApi && !dataApi) {
+      request(
+        guildService.get(dataContext?.id),
+        langService.get(),
+      )
+    }
+  }, [dataContext?.id, request, loadingApi, dataApi])
 
   useEffect(() => {
     if (errorApi) {
       console.error("Error API:", errorApi)
     }
-  }, [errorApi])
-
-  const mergedData = useMemo(() => {
-    if (dataContext && dataApi) {
-      return {
-        ...dataApi[0][0],
-        ...dataContext,
-      }
+    if (errorUpdate) {
+      console.error("Error Update:", errorUpdate)
     }
-  }, [dataContext, dataApi])
+  }, [errorApi, errorUpdate])
 
-  return (
-    <>
-      <h1>Config</h1>
-      <pre>{JSON.stringify(mergedData, null, 4)}</pre>
-    </>
+  const onSubmitHandler = (formData: FormExpectedData) => {
+    requestUpdate(
+      guildService.update(dataContext!.id, formData as unknown as Partial<LucyGuildResponse>),
+    )
+  }
+
+  return loadingApi || !dataApi ? null : (
+    <Form onSubmit={onSubmitHandler}>
+      <Select name="lang" defaultValue={dataApi[0].lang.code}>
+        {dataApi[1].map((lang) => (
+          <Option
+            key={lang.code}
+            value={lang.code}
+          >
+            {lang.name}
+          </Option>
+        ))}
+      </Select>
+      <Button type="submit">{t("save")}</Button>
+    </Form>
   )
 }

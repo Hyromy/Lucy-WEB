@@ -8,13 +8,12 @@ export default function Info() {
     error: any
   }>()
 
-  if (loading) return <p>Cargando info de la guild...</p>
-  if (error) return <p>Error al cargar la guild</p>
+  if (loading) return <p>Loading</p>
+  if (error) return <p>Something went wrong</p>
 
   return (
-    <>
-      <h1>Info de {data?.name}</h1>
-      <pre>{JSON.stringify(data, null, 4)}</pre>
-    </>
+    <pre>
+      {JSON.stringify(data, null, 4)}
+    </pre>
   )
 }

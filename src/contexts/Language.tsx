@@ -12,6 +12,8 @@ const languageKey = "lang"
 
 const translations = {
   en: {
+    "save": "Save",
+
     "nav.login": "Login",
     "nav.theme.light": "Light",
     "nav.theme.dark": "Dark",
@@ -37,6 +39,8 @@ const translations = {
     "manageGuild.config.label": "Configuration",
   },
   es: {
+    "save": "Guardar",
+
     "nav.login": "Iniciar sesión",
     "nav.theme.light": "Claro",
     "nav.theme.dark": "Oscuro",

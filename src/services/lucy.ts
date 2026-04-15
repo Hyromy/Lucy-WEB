@@ -53,6 +53,10 @@ export const guildService = {
   get: (id: string = "") =>
     api.get<LucyGuildResponse | LucyGuildResponse[]>
       (`${guildService.endpoint}${param(id)}`),
+
+  update: (id: string, data: Partial<LucyGuildResponse>) =>
+    api.patch<LucyGuildResponse>
+      (`${guildService.endpoint}${param(id)}`, data),
 }
 
 export const langService = {

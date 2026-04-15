@@ -2,12 +2,15 @@ import { type ButtonHTMLAttributes, type ReactNode } from "react"
 import type { sizes, variants as typesVariants } from "../types/components"
 import { sizes as valueSizes, variants as valuesVariants } from "./values"
 
+type ButtonTypes = "button" | "submit" | "reset"
+
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: typesVariants
   size?: sizes
   leftIcon?: ReactNode
   rightIcon?: ReactNode
   isLoading?: boolean
+  type?: ButtonTypes
 }
 export function Button({
   children,
@@ -18,6 +21,7 @@ export function Button({
   isLoading,
   className = "",
   disabled,
+  type = "button",
   ...props
 }: ButtonProps) {
   const baseStyles =

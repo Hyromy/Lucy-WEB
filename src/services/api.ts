@@ -18,6 +18,7 @@ const client = axios.create({
   xsrfHeaderName: "X-CSRFToken",
   headers: {
     "Content-Type": "application/json",
+    "X-Source": "web",
   },
 })
 
