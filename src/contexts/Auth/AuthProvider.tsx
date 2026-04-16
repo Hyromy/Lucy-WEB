@@ -1,7 +1,5 @@
 import {
   useCallback,
-  createContext,
-  useContext,
   useEffect,
   useMemo,
   useState,
@@ -9,21 +7,11 @@ import {
 } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { authService, discordService } from "../services/lucy"
-import type { MeResponse } from "../types/api"
+import { authService, discordService } from "../../services/lucy"
+import type { MeResponse } from "../../types/api"
 
-import { ROUTES } from "../routes"
-
-type AuthContextType = {
-  user: MeResponse | null
-  authenticated: boolean
-  loading: boolean
-  error: Error | null
-  refreshMe: () => Promise<void>
-  logout: () => Promise<void>
-}
-
-const AuthContext = createContext<AuthContextType | null>(null)
+import { AuthContext } from "./AuthContext"
+import { ROUTES } from "../../routes/paths"
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate()
@@ -71,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       navigate(ROUTES.WELCOME, { replace: true })
     }
-  }, [])
+  }, [navigate])
 
   useEffect(() => {
     void refreshMe().catch(() => undefined)
@@ -83,13 +71,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-}
-
-export default function useAuth() {
-  const ctx = useContext(AuthContext)
-  if (!ctx) {
-    throw new Error("useAuth must be used within an AuthProvider")
-  }
-
-  return ctx
 }

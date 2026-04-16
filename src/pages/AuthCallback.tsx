@@ -1,11 +1,11 @@
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
-import useAuth from "../contexts/Auth"
-
 import Main from "../layouts/Main"
 
-import { ROUTES } from "../routes"
+import useAuth from "../hooks/useAuth"
+
+import { ROUTES } from "../routes/paths"
 
 export default function AuthCallback() {
   const navigate = useNavigate()

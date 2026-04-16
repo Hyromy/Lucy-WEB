@@ -3,16 +3,17 @@ import { Moon, Sun, Contrast } from "lucide-react"
 import { SiDiscord } from "@icons-pack/react-simple-icons"
 import Flag from "react-flagkit"
 
-import useTheme, { type Theme } from "../contexts/Theme"
-import useLanguage, { type Language } from "../contexts/Language"
-import useAuth from "../contexts/Auth"
-
 import { Dropdown, type DropdownOption } from "../components/Dropdown"
 import { Button } from "../components/Button"
 
 import { discordOAuthService } from "../services/lucy"
+import { ROUTES } from "../routes/paths"
+import useLanguage from "../hooks/useLanguage"
+import useAuth from "../hooks/useAuth"
+import type { Language } from "../contexts/Language/LanguageContext"
+import useTheme from "../hooks/useTheme"
+import type { Theme } from "../contexts/Theme/ThemeContext"
 
-import { ROUTES } from "../routes"
 
 const size = 20
 const flagSize = size * 1.4

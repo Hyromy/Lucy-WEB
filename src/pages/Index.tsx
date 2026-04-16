@@ -1,6 +1,6 @@
 import Main from "../layouts/Main"
 
-import useLanguage from "../contexts/Language"
+import useLanguage from "../hooks/useLanguage"
 
 export default function Index() {
   const { t } = useLanguage()

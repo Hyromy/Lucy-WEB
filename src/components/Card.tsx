@@ -1,6 +1,6 @@
 import { type ReactNode } from "react"
 import type { GuildResponse } from "../types/api"
-import useLanguage from "../contexts/Language"
+import useLanguage from "../hooks/useLanguage"
 
 type CardProps = {
   children: ReactNode

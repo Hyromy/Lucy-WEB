@@ -1,9 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 
-import { ThemeProvider } from "./contexts/Theme"
-import { LanguageProvider } from "./contexts/Language"
-import { AuthProvider } from "./contexts/Auth"
-import { routes } from "./routes"
+import { ThemeProvider } from "./contexts/Theme/ThemeProvider"
+import { LanguageProvider } from "./contexts/Language/LanguageProvider"
+import { AuthProvider } from "./contexts/Auth/AuthProvider"
+import { routes } from "./routes/routes"
 import type { AppRoute } from "./types/appRoute"
 
 function renderRoutes(routeList: AppRoute[]) {

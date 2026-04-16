@@ -5,13 +5,13 @@ import { useCallback, useEffect } from "react"
 import { guildService, langService } from "../../services/lucy"
 import { Form, Select, Option } from "../../components/Form"
 import { Button } from "../../components/Button"
-import useLanguage from "../../contexts/Language"
+import useLanguage from "../../hooks/useLanguage"
 import useEvent from "../../hooks/useEvent"
 
 type ContextData = {
   data: GuildResponse | null
   loading: boolean
-  error: any
+  error: Error | null
 }
 
 type ApiResponse = [
@@ -37,7 +37,7 @@ export default function Config() {
         langService.get(),
       )
     }
-  }, [dataContext?.id, request, loadingApi, dataApi])
+  }, [dataContext, loadingApi, dataApi, request])
 
   useEffect(() => {
     if (errorApi) {
@@ -61,7 +61,7 @@ export default function Config() {
         ]
       })
     }
-  }, [dataContext?.id, setDataApi]))
+  }, [dataContext, setDataApi]))
 
   const onSubmitHandler = (formData: FormExpectedData) => {
     requestUpdate(

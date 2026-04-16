@@ -8,8 +8,9 @@ import {
 import type { GuildResponse } from "../../types/api"
 import { useEffect } from "react"
 import { discordService } from "../../services/lucy"
-import { GUILD_MODULES } from "../../routes"
-import useLanguage from "../../contexts/Language"
+import useLanguage from "../../hooks/useLanguage"
+import { GUILD_MODULES } from "../../routes/modules"
+import type { GUILD_MODULE_KEY } from "../../routes/paths"
 
 export default function ManageGuild() {
   const { data, error, request } = useApi<GuildResponse>()
@@ -67,7 +68,7 @@ function Aside() {
           })}
         >
           {module.icon}
-          <span>{t(`manageGuild.${module.label}.label` as any)}</span>
+          <span>{t(`manageGuild.${module.label as GUILD_MODULE_KEY}.label`)}</span>
         </NavLink>
       ))}
     </aside>

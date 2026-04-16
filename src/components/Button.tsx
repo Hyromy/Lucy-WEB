@@ -32,6 +32,7 @@ export function Button({
     <button
       className={`${baseStyles} ${valuesVariants[variant]} ${valueSizes[size]} ${className}`}
       disabled={isLoading || disabled}
+      type={type}
       {...props}
     >
       {isLoading ? (

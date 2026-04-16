@@ -1,16 +1,18 @@
-import {
-  createContext,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react"
+import { createContext } from "react"
 
 export type Language = "en" | "es"
 
-const languageKey = "lang"
+export type TranslationKey = keyof (typeof translations)["en"]
 
-const translations = {
+export type LanguageContextType = {
+  language: Language
+  setLanguage: (language: Language) => void
+  t: (key: TranslationKey) => string
+}
+
+export const LanguageContext = createContext<LanguageContextType | null>(null)
+
+export const translations = {
   en: {
     "save": "Save",
 
@@ -68,66 +70,3 @@ const translations = {
     "manageGuild.config.form.lang": "Idioma del bot",
   },
 } as const
-
-export type TranslationKey = keyof (typeof translations)["en"]
-
-const isLanguage = (value: string): value is Language => {
-  return value == "en" || value == "es"
-}
-const getLanguageFromLS = (): Language => {
-  const savedLanguage = localStorage.getItem(languageKey)
-  
-  return savedLanguage && isLanguage(savedLanguage)
-    ? savedLanguage
-    : "es"
-}
-
-const setLanguageInLS = (language: Language) => {
-  localStorage.setItem(languageKey, language)
-}
-
-type LanguageContextType = {
-  language: Language
-  setLanguage: (language: Language) => void
-  t: (key: TranslationKey) => string
-}
-
-const LanguageContext = createContext<LanguageContextType | null>(null)
-
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>(() => {
-    return getLanguageFromLS()
-  })
-  
-  const setLanguage = (nextLanguage: Language) => {
-    setLanguageState(nextLanguage)
-    setLanguageInLS(nextLanguage)
-  }
-  
-  const contextValue = useMemo<LanguageContextType>(() => {
-    const t = (key: TranslationKey) => {
-      return translations[language][key] || translations.en[key] || key
-    }
-    
-    return {
-      language,
-      setLanguage,
-      t,
-    }
-  }, [language])
-  
-  return (
-    <LanguageContext.Provider value={contextValue}>
-      {children}
-    </LanguageContext.Provider>
-  )
-}
-
-export default function useLanguage() {
-  const context = useContext(LanguageContext)
-  if (!context) {
-    throw new Error("useLanguage must be used within a LanguageProvider")
-  }
-  
-  return context
-}

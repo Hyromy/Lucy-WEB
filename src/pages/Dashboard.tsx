@@ -2,16 +2,15 @@ import Main from "../layouts/Main"
 import NotFound from "./NotFound"
 import { GuildCard } from "../components/Card"
 
-import useAuth from "../contexts/Auth"
-
+import useAuth from "../hooks/useAuth"
+import useLanguage from "../hooks/useLanguage"
 import useApi from "../hooks/useApi"
 
 import type { GuildResponse, LucyGuildResponse } from "../types/api"
 import { discordService, guildService } from "../services/lucy"
 import { useEffect, useMemo } from "react"
-import useLanguage from "../contexts/Language"
 import { useNavigate } from "react-router-dom"
-import { ROUTES } from "../routes"
+import { ROUTES } from "../routes/paths"
 
 const urlBase = import.meta.env.VITE_DISCORD_AUTHORIZE_URL || "https://discord.com/oauth2/authorize"
 const clientID = import.meta.env.VITE_DISCORD_CLIENT_ID || "1337916179485954068"
@@ -48,7 +47,7 @@ export default function Dashboard() {
       guildService.get(),
       discordService.guilds(),
     )
-  }, [])
+  }, [request])
 
   useEffect(() => {
     if (error) {

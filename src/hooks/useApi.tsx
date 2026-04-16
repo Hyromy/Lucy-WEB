@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react"
-import { ApiError } from "../services/api"
 
-type ApiData = any
+type ApiData = Record<string, unknown> | unknown[] | string | number | boolean | null
 
 type RequestResult<TResults extends unknown[]> =
   TResults extends [Promise<infer TSingle>]
@@ -13,12 +12,11 @@ type RequestResult<TResults extends unknown[]> =
 export default function useApi<T = ApiData>() {
   const [data, setData] = useState<T | null>(null)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<Error | null>(null)
 
-  const parseErrorMessage = (err: unknown) => {
-    if (err instanceof ApiError) return `API error: ${err.message}`
-    if (err instanceof Error) return `useApi error: ${err.message}`
-    return "useApi error: Unknown error occurred"
+  const parseError = (err: unknown): Error => {
+    if (err instanceof Error) return err
+    return new Error("Unknown error occurred")
   }
 
   const request = useCallback(async <TResults extends unknown[]>(
@@ -45,7 +43,7 @@ export default function useApi<T = ApiData>() {
     
     } catch (err) {
       setData(null)
-      setError(parseErrorMessage(err))
+      setError(parseError(err))
       return null
     
     } finally {

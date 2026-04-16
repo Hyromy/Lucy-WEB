@@ -2,7 +2,9 @@ import { useEffect } from "react"
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/"
 
-export default function useEvent(callback: (data: any) => void) {
+import type { RedisPayload } from "../types/api"
+
+export default function useEvent<T = unknown>(callback: (data: RedisPayload & T) => void) {
   useEffect(() => {
     const eventSource = new EventSource(`${API_URL}api/events/`)
     

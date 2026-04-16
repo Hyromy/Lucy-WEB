@@ -1,18 +1,15 @@
 import { type ReactNode, type FormEvent, type ReactElement } from "react"
 
-type FormProps = {
+type FormProps<T> = {
   children: ReactNode
-  onSubmit: (data: any) => void
+  onSubmit: (data: T) => void
 }
 
-export function Form({ children, onSubmit }: FormProps) {
+export function Form<T extends Record<string, unknown>>({ children, onSubmit }: FormProps<T>) {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
-    const data: Record<string, any> = {}
-    formData.forEach((value, key) => {
-      data[key] = value
-    })
+    const data = Object.fromEntries(formData.entries()) as unknown as T
     onSubmit(data)
   }
 

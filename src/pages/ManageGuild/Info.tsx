@@ -5,11 +5,12 @@ export default function Info() {
   const { data, loading, error } = useOutletContext<{
     data: GuildResponse | null
     loading: boolean
-    error: any
+    error: Error | null
   }>()
 
   if (loading) return <p>Loading</p>
-  if (error) return <p>Something went wrong</p>
+  if (error) return <p>{error.message}</p>
+  if (!data) return <p>No data</p>
 
   return (
     <pre>

@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react"
 import { SiDiscord, SiGithub } from "@icons-pack/react-simple-icons"
 import { Link } from "react-router-dom"
+import useLanguage from "../hooks/useLanguage"
 
-import useLanguage from "../contexts/Language"
 
 const getRandomEmojis = (): string[] => {
   const emojis = ["♥️", "🐳", "🐘", "🐍", "🐧", "🌽", "⚛️", "🎮"]
