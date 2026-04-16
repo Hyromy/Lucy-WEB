@@ -1,0 +1,46 @@
+name: Rollback in VPS
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Docker image tag to deploy (example: 26.04.03-12-a1b2c3d)"
+        required: true
+
+jobs:
+  validate_tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate image tag input
+        run: |
+          if [ -z "${{ github.event.inputs.image_tag }}" ]; then
+            echo "image_tag is required."
+            exit 1
+          fi
+          if [ "${{ github.event.inputs.image_tag }}" = "latest" ]; then
+            echo "Using 'latest' for rollback is not allowed. Provide a fixed image tag."
+            exit 1
+          fi
+
+  rollback:
+    needs: validate_tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy selected image tag to VPS
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ vars.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            set -e
+            echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u "${{ vars.DOCKER_USER }}" --password-stdin
+
+            docker stop ${{ vars.DOCKER_CONTAINER }} || true
+            docker rm ${{ vars.DOCKER_CONTAINER }} || true
+            docker pull ${{ vars.DOCKER_USER }}/${{ vars.DOCKER_IMAGE }}:${{ github.event.inputs.image_tag }}
+
+            docker run -d --name '${{ vars.DOCKER_CONTAINER }}' \
+              -p '${{ vars.DOCKER_HOST_PORT }}:5173' \
+              --restart unless-stopped \
+              '${{ vars.DOCKER_USER }}/${{ vars.DOCKER_IMAGE }}:${{ github.event.inputs.image_tag }}'
