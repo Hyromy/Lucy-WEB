@@ -43,8 +43,9 @@ jobs:
       - name: Build Docker Image
         run: |
           docker build \
-            --build-arg VITE_DISCORD_CLIENT_ID='${{ vars.VITE_DISCORD_CLIENT_ID }}' \
-            --build-arg VITE_DISCORD_REDIRECT_URI='${{ vars.VITE_DISCORD_REDIRECT_URI }}' \
+            --build-arg VITE_DISCORD_BOT_CLIENT_ID='${{ vars.VITE_DISCORD_BOT_CLIENT_ID }}' \
+            --build-arg VITE_DISCORD_BOT_PERMISSIONS='${{ vars.VITE_DISCORD_BOT_PERMISSIONS }}' \
+            --build-arg VITE_DISCORD_BOT_SCOPES='${{ vars.VITE_DISCORD_BOT_SCOPES }}' \
             --build-arg VITE_API_URL='${{ vars.VITE_API_URL }}' \
             -t '${{ vars.DOCKER_USER }}/${{ vars.DOCKER_IMAGE }}:'"$TAG" \
             -t '${{ vars.DOCKER_USER }}/${{ vars.DOCKER_IMAGE }}:latest' \

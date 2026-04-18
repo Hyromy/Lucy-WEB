@@ -12,16 +12,17 @@ import { useEffect, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 import { ROUTES } from "../routes/paths"
 
-const urlBase = import.meta.env.VITE_DISCORD_AUTHORIZE_URL || "https://discord.com/oauth2/authorize"
-const clientID = import.meta.env.VITE_DISCORD_CLIENT_ID || "1337916179485954068"
-const permissions = import.meta.env.VITE_DISCORD_PERMISSIONS || "8"
-const scopes = import.meta.env.VITE_DISCORD_SCOPES || "bot%20applications.commands"
+import {
+  DISCORD_BOT_CLIENT_ID,
+  DISCORD_BOT_PERMISSIONS,
+  DISCORD_BOT_SCOPES
+} from "../constants/config"
 
 const urlInviteGuild = (guildID: string) => (
-  `${urlBase}?` +
-  `client_id=${clientID}` +
-  `&permissions=${permissions}` +
-  `&scope=${scopes}` +
+  "https://discord.com/oauth2/authorize?" +
+  `client_id=${DISCORD_BOT_CLIENT_ID}` +
+  `&permissions=${DISCORD_BOT_PERMISSIONS}` +
+  `&scope=${DISCORD_BOT_SCOPES}` +
   `&guild_id=${guildID}`
 )
 

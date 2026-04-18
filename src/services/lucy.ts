@@ -7,7 +7,7 @@ import type {
   LangResponse,
 } from "../types/api"
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/"
+import { API_URL } from "../constants/config"
 
 const param = (id: string = "") => {
 	return (Number(id) > 0)
