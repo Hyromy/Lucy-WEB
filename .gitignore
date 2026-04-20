@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 .env
+.vscode
+*notes*.md
+version_template.md

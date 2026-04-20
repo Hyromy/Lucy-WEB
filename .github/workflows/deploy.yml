@@ -2,39 +2,37 @@ name: Deploy in VPS
 
 on:
   workflow_dispatch:
-
   workflow_run:
     workflows: ["Push Docker Image"]
     types:
       - completed
 
 jobs:
-  build:
+  deploy_latest:
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') }}
     runs-on: ubuntu-latest
-    
     steps:
-      - name: Deploy to VPS
+      - name: Deploy latest image to VPS
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ vars.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd ~
-            rm -rf Lucy-dash
-            git clone https://github.com/${{ github.repository }}.git
-            cd Lucy-dash
-            
-            docker stop ${{ vars.DOCKER_CONTAINER }} || true
-            docker rm ${{ vars.DOCKER_CONTAINER }} || true
-            docker rmi -f lucy-dash:latest || true
-            
-            docker build \
-              --build-arg VITE_DISCORD_CLIENT_ID='${{ vars.VITE_DISCORD_CLIENT_ID }}' \
-              --build-arg VITE_DISCORD_REDIRECT_URI='${{ vars.VITE_DISCORD_REDIRECT_URI }}' \
-              --build-arg VITE_API_URL='${{ vars.VITE_API_URL }}' \
-              -t lucy-dash:latest .
-            
-            docker run -d --name '${{ vars.DOCKER_CONTAINER }}' \
+            set -e
+            echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u "${{ vars.DOCKER_USER }}" --password-stdin
+
+            NETWORK_ARGS=""
+            if [ -n "${{ vars.DOCKER_NETWORK }}" ]; then
+              NETWORK_ARGS="--network ${{ vars.DOCKER_NETWORK }}"
+            fi
+
+            docker stop ${{ vars.DOCKER_IMAGE }}-app || true
+            docker rm ${{ vars.DOCKER_IMAGE }}-app || true
+            docker pull ${{ vars.DOCKER_USER }}/${{ vars.DOCKER_IMAGE }}:latest
+
+            docker run -d --name '${{ vars.DOCKER_IMAGE }}-app' \
               -p '${{ vars.DOCKER_HOST_PORT }}:5173' \
-              lucy-dash:latest
+              --restart unless-stopped \
+              $NETWORK_ARGS \
+              '${{ vars.DOCKER_USER }}/${{ vars.DOCKER_IMAGE }}:latest'
