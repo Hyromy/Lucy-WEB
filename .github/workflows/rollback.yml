@@ -36,11 +36,17 @@ jobs:
             set -e
             echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u "${{ vars.DOCKER_USER }}" --password-stdin
 
-            docker stop ${{ vars.DOCKER_CONTAINER }} || true
-            docker rm ${{ vars.DOCKER_CONTAINER }} || true
-            docker pull ${{ vars.DOCKER_USER }}/${{ vars.DOCKER_IMAGE }}:${{ github.event.inputs.image_tag }}
+            NETWORK_ARGS=""
+            if [ -n "${{ vars.DOCKER_NETWORK }}" ]; then
+              NETWORK_ARGS="--network ${{ vars.DOCKER_NETWORK }}"
+            fi
 
-            docker run -d --name '${{ vars.DOCKER_CONTAINER }}' \
+            docker stop ${{ vars.DOCKER_IMAGE }}-app || true
+            docker rm ${{ vars.DOCKER_IMAGE }}-app || true
+            docker pull ${{ vars.DOCKER_USER }}/${{ vars.DOCKER_IMAGE }}:latest
+
+            docker run -d --name '${{ vars.DOCKER_IMAGE }}-app' \
               -p '${{ vars.DOCKER_HOST_PORT }}:5173' \
               --restart unless-stopped \
-              '${{ vars.DOCKER_USER }}/${{ vars.DOCKER_IMAGE }}:${{ github.event.inputs.image_tag }}'
+              $NETWORK_ARGS \
+              '${{ vars.DOCKER_USER }}/${{ vars.DOCKER_IMAGE }}:latest'
