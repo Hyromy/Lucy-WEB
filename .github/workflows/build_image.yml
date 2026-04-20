@@ -2,26 +2,54 @@ name: Push Docker Image
 
 on:
   workflow_dispatch:
-  
   push:
     branches:
       - main
 
 jobs:
-  build:
+  quality-gate:
     runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Lint
+        run: npm run lint
+
+      - name: Run Tests
+        run: npm test
+
+  build:
+    needs: quality-gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set image tag
-        id: tag
-        run: echo "TAG=$(date +'%y.%m.%d')" >> $GITHUB_ENV
+        run: |
+          DATE_TAG=$(date +'%y.%m.%d')
+          echo "TAG=${DATE_TAG}-${GITHUB_RUN_NUMBER}" >> "$GITHUB_ENV"
 
       - name: Build Docker Image
         run: |
-          docker build -t '${{ vars.DOCKER_USER }}/${{ vars.DOCKER_IMAGE }}:${{ env.TAG }}' -t '${{ vars.DOCKER_USER }}/${{ vars.DOCKER_IMAGE }}:latest' .
+          docker build \
+            --build-arg VITE_DISCORD_BOT_CLIENT_ID='${{ vars.VITE_DISCORD_BOT_CLIENT_ID }}' \
+            --build-arg VITE_DISCORD_BOT_PERMISSIONS='${{ vars.VITE_DISCORD_BOT_PERMISSIONS }}' \
+            --build-arg VITE_DISCORD_BOT_SCOPES='${{ vars.VITE_DISCORD_BOT_SCOPES }}' \
+            --build-arg VITE_API_URL='${{ vars.VITE_API_URL }}' \
+            -t '${{ vars.DOCKER_USER }}/${{ vars.DOCKER_IMAGE }}:'"$TAG" \
+            -t '${{ vars.DOCKER_USER }}/${{ vars.DOCKER_IMAGE }}:latest' \
+            .
 
       - name: Login to Docker
         uses: docker/login-action@v3
@@ -31,5 +59,5 @@ jobs:
 
       - name: Push Docker Image
         run: |
-          docker push '${{ vars.DOCKER_USER }}/${{ vars.DOCKER_IMAGE }}:${{ env.TAG }}'
+          docker push '${{ vars.DOCKER_USER }}/${{ vars.DOCKER_IMAGE }}:'"$TAG"
           docker push '${{ vars.DOCKER_USER }}/${{ vars.DOCKER_IMAGE }}:latest'

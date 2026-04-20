@@ -7,6 +7,22 @@
     <link rel="shortcut icon" href="favicon-32.ico" type="image/x-icon">
     <link rel="shortcut icon" href="favicon-48.ico" type="image/x-icon">
     <title>Lucy</title>
+    <script>
+      (function () {
+        const key = "theme"
+        const storedTheme = localStorage.getItem(key) || "system"
+        const resolvedTheme =
+          storedTheme == "system"
+            ? (window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light"
+            )
+            : storedTheme
+
+        document.documentElement.classList.remove("light", "dark")
+        document.documentElement.classList.add(resolvedTheme)
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>
