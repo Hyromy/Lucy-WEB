@@ -5,6 +5,7 @@ import { LanguageProvider } from "./contexts/Language/LanguageProvider"
 import { AuthProvider } from "./contexts/Auth/AuthProvider"
 import { routes } from "./routes/routes"
 import type { AppRoute } from "./types/appRoute"
+import { SidebarProvider } from "./contexts/Sidebar/SidebarProvider"
 
 function renderRoutes(routeList: AppRoute[]) {
   return routeList.map((route, index) => {
@@ -26,11 +27,13 @@ export default function App() {
   return (
     <LanguageProvider>
       <ThemeProvider>
-        <BrowserRouter>
-          <AuthProvider>
-            <Routes>{renderRoutes(routes)}</Routes>
-          </AuthProvider>
-        </BrowserRouter>
+        <SidebarProvider>
+          <BrowserRouter>
+            <AuthProvider>
+              <Routes>{renderRoutes(routes)}</Routes>
+            </AuthProvider>
+          </BrowserRouter>
+        </SidebarProvider>
       </ThemeProvider>
     </LanguageProvider>
   )

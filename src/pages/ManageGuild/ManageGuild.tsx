@@ -11,10 +11,15 @@ import { discordService } from "../../services/lucy"
 import useLanguage from "../../hooks/useLanguage"
 import { GUILD_MODULES } from "../../routes/modules"
 import type { GUILD_MODULE_KEY } from "../../routes/paths"
+import useSidebar from "../../hooks/useSidebar"
+import { OffCanvas } from "../../components/OffCanvas"
 
 export default function ManageGuild() {
   const { data, error, request } = useApi<GuildResponse>()
   const { id } = useParams<{ id: string }>()
+  const { setHasSidebar, activeSidebar, setOpen } = useSidebar()
+
+  const openNull = () => setOpen(null)
 
   useEffect(() => {
     if (!id) {
@@ -30,10 +35,26 @@ export default function ManageGuild() {
     }
   }, [data, error])
 
+  useEffect(() => {
+    setHasSidebar(true)
+    return () => setHasSidebar(false)
+  }, [setHasSidebar])
+
   return (
     <Main>
       <div className="flex items-start">
-        <Aside />
+        <div className="hidden lg:block">
+          <Aside />
+        </div>
+        <div className="lg:hidden">
+          <OffCanvas
+            isOpen={activeSidebar == "navigation"}
+            onClose={openNull}
+            title="Manage super guild"
+          >
+            <Aside closeCanvas={openNull} />
+          </OffCanvas>
+        </div>
         <section className="flex-1">
           <Outlet context={{ data, error, loading: !data && !error }} />
         </section>
@@ -42,30 +63,32 @@ export default function ManageGuild() {
   )
 }
 
-function Aside() {
+function Aside({ closeCanvas }: { closeCanvas?: () => void }) {
   const { t } = useLanguage()
+
+  const activeModuleClasses = (isActive: boolean): string => {
+    let classes = "flex items-center gap-2 px-3 py-2 rounded-md decoration-none "
+    if (isActive) {
+      classes += "text[#111827] bg-[#f3f4f6]"
+    } else {
+      classes += "text[#374151] bg-transparent"
+    }
+    return classes
+  }
 
   return (
     <aside 
       className="
-        w-56 pe-2 me-2 border-r border-[rgb(var(--border))] sticky top-[calc(var(--nav-h)+0.5rem)]
-        display-grid gap-4 self-start
+        w-72 lg:pe-2 lg:me-2 lg:border-r border-[rgb(var(--border))] lg:sticky lg:top-[calc(var(--nav-h)+0.5rem)]
+        flex flex-col gap-1
       "
     >
       {GUILD_MODULES.map((module) => (
         <NavLink
+          className={({ isActive }) => activeModuleClasses(isActive)}
           key={module.path}
           to={module.path!}
-          style={({ isActive }) => ({
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            padding: "0.5rem 0.625rem",
-            borderRadius: "6px",
-            textDecoration: "none",
-            color: isActive ? "#111827" : "#374151",
-            backgroundColor: isActive ? "#f3f4f6" : "transparent",
-          })}
+          onClick={() => closeCanvas?.()}
         >
           {module.icon}
           <span>{t(`manageGuild.${module.label as GUILD_MODULE_KEY}.label`)}</span>

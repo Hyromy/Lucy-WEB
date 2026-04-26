@@ -1,5 +1,10 @@
 import { Link } from "react-router-dom"
-import { Moon, Sun, Contrast } from "lucide-react"
+import {
+  Moon,
+  Sun,
+  Contrast,
+  Menu,
+} from "lucide-react"
 import { SiDiscord } from "@icons-pack/react-simple-icons"
 import Flag from "react-flagkit"
 
@@ -13,12 +18,15 @@ import useAuth from "../hooks/useAuth"
 import type { Language } from "../contexts/Language/LanguageContext"
 import useTheme from "../hooks/useTheme"
 import type { Theme } from "../contexts/Theme/ThemeContext"
+import useSidebar from "../hooks/useSidebar"
 
 
 const size = 20
 const flagSize = size * 1.4
 
 export default function Navbar() {
+  const { hasSidebar, setOpen, activeSidebar } = useSidebar()
+
   return (
     <nav 
       className="
@@ -27,9 +35,19 @@ export default function Navbar() {
       "
     >
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between p-2">
-        <Link to={ROUTES.WELCOME} className="text-sm font-semibold tracking-wide">
-          Lucy
-        </Link>
+        <div className="flex items-center gap-2">
+          {hasSidebar && (
+            <button 
+              onClick={() => setOpen(activeSidebar == "navigation" ? null : "navigation")} 
+              className="lg:hidden p-1 -ml-1 rounded-md hover:bg-[rgb(var(--border))]/50"
+            >
+              <Menu size={size} />
+            </button>
+          )}
+          <Link to={ROUTES.WELCOME} className="text-sm font-semibold tracking-wide">
+            Lucy
+          </Link>
+        </div>
         <div className="flex gap-2">
           <LangSelector />
           <ThemeSelector />
