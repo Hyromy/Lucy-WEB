@@ -1,4 +1,6 @@
-import { type ReactNode, type FormEvent, type ReactElement } from "react"
+import { type ReactNode, type FormEvent } from "react"
+import * as RadixSelect from "@radix-ui/react-select"
+import { ChevronDown, Check } from "lucide-react"
 
 type FormProps<T> = {
   children: ReactNode
@@ -22,52 +24,81 @@ export function Form<T extends Record<string, unknown>>({ children, onSubmit }: 
 
 export type SelectProps = {
   name: string
-  children: ReactElement<OptionProps> | ReactElement<OptionProps>[]
-  id?: string
-  disabled?: boolean
+  children: ReactNode
   defaultValue?: string
   onChange?: (value: string) => void
+  disabled?: boolean
 }
-
 export function Select({
   name,
-  id,
-  disabled,
   children,
   defaultValue,
   onChange,
+  disabled
 }: SelectProps) {
   return (
-    <select
+    <RadixSelect.Root
       name={name}
-      id={id}
-      disabled={disabled}
       defaultValue={defaultValue}
-      onChange={(e) => onChange && onChange(e.target.value)}
+      onValueChange={onChange}
+      disabled={disabled}
     >
-      {children}
-    </select>
+      <RadixSelect.Trigger
+        disabled={disabled}
+        className="
+          flex h-10 w-full items-center justify-between rounded-md border border-[rgb(var(--border))]
+          bg-[rgb(var(--card))] px-3 py-2 text-sm text-[rgb(var(--fg))] focus:outline-none focus:ring-1
+          focus:ring-[rgb(var(--primary))] disabled:opacity-50 transition-colors
+        "
+      >
+        <RadixSelect.Value />
+        <RadixSelect.Icon>
+          <ChevronDown className="h-4 w-4 opacity-50" />
+        </RadixSelect.Icon>
+      </RadixSelect.Trigger>
+
+      <RadixSelect.Portal>
+        <RadixSelect.Content 
+          className="
+            z-100 relative min-w-(--radix-select-trigger-width) overflow-hidden rounded-md border border-[rgb(var(--border))]
+            bg-[rgb(var(--card))] shadow-xl animate-in fade-in-0 zoom-in-95
+          "
+        >
+          <RadixSelect.Viewport className="p-1">
+            {children}
+          </RadixSelect.Viewport>
+        </RadixSelect.Content>
+      </RadixSelect.Portal>
+    </RadixSelect.Root>
   )
 }
 
-export type OptionProps = {
+type OptionProps = {
   value: string
   children: ReactNode
-  selected?: boolean
   disabled?: boolean
 }
-
 export function Option({
   value,
   children,
-  disabled,
+  disabled
 }: OptionProps) {
   return (
-    <option
+    <RadixSelect.Item
       value={value}
       disabled={disabled}
+      className="
+        relative flex w-full cursor-pointer select-none items-center rounded-sm py-2 pl-8 pr-2 text-sm
+        text-[rgb(var(--fg))] outline-none focus:bg-[rgb(var(--primary))] focus:text-[rgb(var(--primary-fg))]
+        data-disabled:pointer-events-none data-disabled:opacity-50 transition-colors
+      "
     >
-      {children}
-    </option>
+      <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+        <RadixSelect.ItemIndicator>
+          <Check className="h-4 w-4" />
+        </RadixSelect.ItemIndicator>
+      </span>
+      <RadixSelect.ItemText>{children}</RadixSelect.ItemText>
+    </RadixSelect.Item>
   )
 }

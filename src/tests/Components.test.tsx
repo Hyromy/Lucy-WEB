@@ -6,6 +6,8 @@ import { Card, GuildCard } from "../components/Card"
 import { Form, Option, Select } from "../components/Form"
 import type { GuildResponse } from "../types/api"
 
+window.HTMLElement.prototype.scrollIntoView = vi.fn()
+
 vi.mock("../hooks/useLanguage", () => ({
   default: () => ({
     t: (key: string) => `translated:${key}`,
@@ -78,23 +80,31 @@ describe("Components", () => {
   })
 
   describe("Select", () => {
-    it("uses default value and emits selected option", () => {
+    it("uses default value and emits selected option", async () => {
       const handleChange = vi.fn()
 
-      render(
-        <Select name="lang" defaultValue="es" onChange={handleChange}>
-          <Option value="es">Espanol</Option>
-          <Option value="en">English</Option>
-        </Select>
+      const { container } = render(
+        <form>
+          <Select name="lang" defaultValue="es" onChange={handleChange}>
+            <Option value="es">Espanol</Option>
+            <Option value="en">English</Option>
+          </Select>
+        </form>
       )
-
-      const select = screen.getByRole("combobox") as HTMLSelectElement
-
-      expect(select.value).toBe("es")
-
-      fireEvent.change(select, { target: { value: "en" } })
-
+    
+      const trigger = screen.getByRole("combobox")
+      expect(trigger.textContent).toContain("Espanol")
+    
+      fireEvent.click(trigger)
+    
+      const optionEn = await screen.findByRole("option", { name: "English" })
+      fireEvent.click(optionEn)
+    
       expect(handleChange).toHaveBeenCalledWith("en")
+    
+      const formElement = container.querySelector('[name="lang"]') as HTMLSelectElement | HTMLInputElement
+
+      expect(formElement.value).toBe("en")
     })
 
     it("respects disabled state", () => {
