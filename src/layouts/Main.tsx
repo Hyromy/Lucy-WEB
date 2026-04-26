@@ -5,9 +5,9 @@ import Footer from "./Footer"
 
 export default function Main({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className="mx-auto max-w-7xl w-full p-2">
+      <main className="flex flex-col flex-1 p-2 max-w-7xl mx-auto w-full">
         {children}
       </main>
       <Footer />

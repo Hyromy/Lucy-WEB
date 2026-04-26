@@ -26,7 +26,7 @@ export const translations = {
     
     "index.title": "Preparing something awesome...",
 
-    "notFound.title": "Page Not Found",
+    "notFound.title": "Page not found",
     "notFound.message": "The page you are looking for does not exist.",
     
     "dashboard.title": "Your Servers",
@@ -44,7 +44,7 @@ export const translations = {
   es: {
     "save": "Guardar",
 
-    "nav.login": "Iniciar sesión",
+    "nav.login": "Iniciar",
     "nav.theme.light": "Claro",
     "nav.theme.dark": "Oscuro",
     "nav.theme.system": "Sistema",

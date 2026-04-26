@@ -61,7 +61,7 @@ export default function Footer() {
   useEffect(() => {emojisInLoop(emojiRef)}, [])
 
   return (
-    <footer className="dark mt-auto border-t border-[rgb(var(--border))] bg-[rgb(var(--card))] py-8 transition-colors">
+    <footer className="dark border-t border-[rgb(var(--border))] bg-[rgb(var(--card))] py-8 transition-colors">
       <div className="mx-auto max-w-5xl px-4">
         <hr className="my-4 border-[rgb(var(--border))]" />
         <div className="flex justify-center gap-6 text-sm text-[rgb(var(--muted))]">
