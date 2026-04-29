@@ -30,8 +30,8 @@ export default function Navbar() {
   return (
     <nav 
       className="
-        sticky top-0 z-40 border-b border-[rgb(var(--border))] bg-[rgb(var(--card))]/80 backdrop-blur
-        h-[--nav-h] flex items-center
+        sticky top-0 z-40 border-b border-border bg-card/80 backdrop-blur
+        h-nav-h flex items-center
       "
     >
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between p-2">
@@ -39,7 +39,7 @@ export default function Navbar() {
           {hasSidebar && (
             <button 
               onClick={() => setOpen(activeSidebar == "navigation" ? null : "navigation")} 
-              className="lg:hidden p-1 -ml-1 rounded-md hover:bg-[rgb(var(--border))]/50"
+              className="lg:hidden p-1 -ml-1 rounded-md hover:bg-border/50"
             >
               <Menu size={size} />
             </button>
@@ -87,7 +87,12 @@ function DiscordButton() {
       isLoading={loading}
       className="px-2 py-1.5"
     >
-      <span className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] text-xs font-semibold text-[rgb(var(--fg))]">
+      <span
+        className="
+          flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border
+          bg-bg text-xs font-semibold text-foreground
+        "
+      >
         {avatarUrl ? (
           <img src={avatarUrl} alt={userDisplayName} className="h-full w-full object-cover" />
         ) : (

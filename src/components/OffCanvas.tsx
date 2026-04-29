@@ -41,14 +41,14 @@ export function OffCanvas({
       />
       <aside
         className={`
-          fixed top-0 ${sideClass} h-full w-full max-w-xs bg-white shadow-2xl z-70 transform transition-transform
+          fixed top-0 ${sideClass} h-full w-full max-w-xs bg-bg shadow-2xl z-70 transform transition-transform
           duration-300 ease-in-out ${positions[position]}
         `}
       >
-        <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center justify-between p-4 border-b border-border">
           <h3 className="text-lg font-semibold">{title}</h3>
           <button
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-full hover:bg-muted/50 transition-colors"
             onClick={onClose}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -56,7 +56,7 @@ export function OffCanvas({
             </svg>
           </button>
         </div>
-        <div className="p-4 overflow-y-auto h-[calc(100%-65px)]">
+        <div className="p-4 overflow-y-auto">
           {children}
         </div>
       </aside>

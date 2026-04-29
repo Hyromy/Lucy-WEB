@@ -36,7 +36,7 @@ export default function AuthCallback() {
 
   return (
     <Main>
-      <p className="text-[rgb(var(--muted))]">
+      <p className="text-muted">
         Authenticating...
       </p>
     </Main>

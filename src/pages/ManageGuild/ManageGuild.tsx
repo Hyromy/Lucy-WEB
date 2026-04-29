@@ -69,9 +69,9 @@ function Aside({ closeCanvas }: { closeCanvas?: () => void }) {
   const activeModuleClasses = (isActive: boolean): string => {
     let classes = "flex items-center gap-2 px-3 py-2 rounded-md decoration-none "
     if (isActive) {
-      classes += "text[#111827] bg-[#f3f4f6]"
+      classes += "text-primary-fg bg-primary"
     } else {
-      classes += "text[#374151] bg-transparent"
+      classes += "bg-transparent"
     }
     return classes
   }
@@ -79,7 +79,7 @@ function Aside({ closeCanvas }: { closeCanvas?: () => void }) {
   return (
     <aside 
       className="
-        w-72 lg:pe-2 lg:me-2 lg:border-r border-[rgb(var(--border))] lg:sticky lg:top-[calc(var(--nav-h)+0.5rem)]
+        w-72 lg:pe-2 lg:me-2 lg:border-r border-border lg:sticky lg:top-nav-h
         flex flex-col gap-1
       "
     >

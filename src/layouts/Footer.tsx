@@ -61,20 +61,20 @@ export default function Footer() {
   useEffect(() => {emojisInLoop(emojiRef)}, [])
 
   return (
-    <footer className="dark border-t border-[rgb(var(--border))] bg-[rgb(var(--card))] py-8 transition-colors">
+    <footer className="dark bg-card text-fg border-t border-border py-8">
       <div className="mx-auto max-w-5xl px-4">
-        <hr className="my-4 border-[rgb(var(--border))]" />
-        <div className="flex justify-center gap-6 text-sm text-[rgb(var(--muted))]">
+        <hr className="my-4 border-border" />
+        <div className="flex justify-center gap-6 text-sm text-muted">
           <Link to={"https://discord.com/users/608870766586494976"} target="_blank">
-            <SiDiscord size={40} color="#ffffff"/>
+            <SiDiscord size={40} className="text-fg" />
           </Link>
           <Link to={"https://github.com/Hyromy"} target="_blank">
-            <SiGithub size={40} color="#ffffff"/>
+            <SiGithub size={40} className="text-fg" />
           </Link>
         </div>
-        <hr className="my-4 border-[rgb(var(--border))]" />
+        <hr className="my-4 border-border" />
         <div className="flex justify-center">
-          <small className="text-[rgb(var(--muted))]">
+          <small className="text-muted">
             {t("footer.madeWith")} <span ref={emojiRef} /><span className="cursor-blink" /> {t("footer.author")}
           </small>
         </div>

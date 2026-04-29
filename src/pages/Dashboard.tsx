@@ -89,7 +89,7 @@ export default function Dashboard() {
         <h2>{title}</h2>
         <div className="flex flex-wrap justify-center items-stretch gap-3 p-3">
           {guilds.map((guild) => (
-            <div key={guild.id} className="w-[320px] max-w-full">
+            <div key={guild.id} className="w-80 max-w-full">
               <GuildCard 
                 guild={guild} 
                 onClick={() => onClick(guild)}
@@ -102,7 +102,7 @@ export default function Dashboard() {
   }
 
   const content = loadingApi
-    ? <p className="text-[rgb(var(--muted))]">Loading...</p>
+    ? <p className="text-muted">Loading...</p>
     : data && (
       <>
         {renderGuildList(manageGuilds, t("dashboard.installed.title"), false)}
@@ -113,10 +113,10 @@ export default function Dashboard() {
   return (!authenticated && !loadingAuth) ? <NotFound /> : (
     <Main>
       <header className="mb-10 px-6">
-        <h1 className="text-3xl font-bold text-[rgb(var(--fg))]">
+        <h1 className="text-3xl font-bold text-foreground">
           {t("dashboard.title")}
         </h1>
-        <p className="text-[rgb(var(--muted))] mt-2">
+        <p className="text-muted mt-2">
           {t("dashboard.description")}
         </p>
       </header>

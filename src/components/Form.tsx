@@ -46,9 +46,9 @@ export function Select({
       <RadixSelect.Trigger
         disabled={disabled}
         className="
-          flex h-10 w-full items-center justify-between rounded-md border border-[rgb(var(--border))]
-          bg-[rgb(var(--card))] px-3 py-2 text-sm text-[rgb(var(--fg))] focus:outline-none focus:ring-1
-          focus:ring-[rgb(var(--primary))] disabled:opacity-50 transition-colors
+          flex h-10 w-full items-center justify-between rounded-md border border-border
+          bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1
+          focus:ring-primary disabled:opacity-50 transition-colors
         "
       >
         <RadixSelect.Value />
@@ -60,8 +60,8 @@ export function Select({
       <RadixSelect.Portal>
         <RadixSelect.Content 
           className="
-            z-100 relative min-w-(--radix-select-trigger-width) overflow-hidden rounded-md border border-[rgb(var(--border))]
-            bg-[rgb(var(--card))] shadow-xl animate-in fade-in-0 zoom-in-95
+            z-100 relative min-w-(--radix-select-trigger-width) overflow-hidden rounded-md border border-border
+            bg-card shadow-xl animate-in fade-in-0 zoom-in-95
           "
         >
           <RadixSelect.Viewport className="p-1">
@@ -89,7 +89,7 @@ export function Option({
       disabled={disabled}
       className="
         relative flex w-full cursor-pointer select-none items-center rounded-sm py-2 pl-8 pr-2 text-sm
-        text-[rgb(var(--fg))] outline-none focus:bg-[rgb(var(--primary))] focus:text-[rgb(var(--primary-fg))]
+        text-foreground outline-none focus:bg-primary focus:text-primary-fg
         data-disabled:pointer-events-none data-disabled:opacity-50 transition-colors
       "
     >
