@@ -43,7 +43,7 @@
     --border: rgb(209, 219, 231);
 }
 
-.dark, .dark * {
+.dark {
     --bg: rgb(3, 5, 7);
     --fg: rgb(232, 235, 253);
 
@@ -96,4 +96,9 @@
     margin-left: 2px;
     vertical-align: middle;
     animation: cursor-blink 1s step-end infinite;
+}
+
+.no-transitions *, 
+.no-transitions {
+    transition: none !important;
 }

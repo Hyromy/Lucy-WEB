@@ -9,7 +9,7 @@ import type { GuildResponse } from "../../types/api"
 import { useEffect } from "react"
 import { discordService } from "../../services/lucy"
 import useLanguage from "../../hooks/useLanguage"
-import { GUILD_MODULES } from "../../routes/modules"
+import { GUILD_MODULES_CONFIG } from "../../routes/modules"
 import type { GUILD_MODULE_KEY } from "../../routes/paths"
 import useSidebar from "../../hooks/useSidebar"
 import { OffCanvas } from "../../components/OffCanvas"
@@ -83,7 +83,7 @@ function Aside({ closeCanvas }: { closeCanvas?: () => void }) {
         flex flex-col gap-1
       "
     >
-      {GUILD_MODULES.map((module) => (
+      {GUILD_MODULES_CONFIG.map((module) => (
         <NavLink
           className={({ isActive }) => activeModuleClasses(isActive)}
           key={module.path}

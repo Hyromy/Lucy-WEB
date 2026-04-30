@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom"
 import {
   Moon,
   Sun,
@@ -19,7 +18,8 @@ import type { Language } from "../contexts/Language/LanguageContext"
 import useTheme from "../hooks/useTheme"
 import type { Theme } from "../contexts/Theme/ThemeContext"
 import useSidebar from "../hooks/useSidebar"
-
+import { Breadcrumb, type BreadcrumbItem } from "../components/Breadcrum"
+import { useLocation, useParams } from "react-router-dom"
 
 const size = 20
 const flagSize = size * 1.4
@@ -30,7 +30,7 @@ export default function Navbar() {
   return (
     <nav 
       className="
-        sticky top-0 z-40 border-b border-border bg-card/80 backdrop-blur
+        sticky top-0 z-40 border-b border-border bg-card/85 backdrop-blur
         h-nav-h flex items-center
       "
     >
@@ -44,9 +44,7 @@ export default function Navbar() {
               <Menu size={size} />
             </button>
           )}
-          <Link to={ROUTES.WELCOME} className="text-sm font-semibold tracking-wide">
-            Lucy
-          </Link>
+          <ThisBreadcrumb />
         </div>
         <div className="flex gap-2">
           <LangSelector />
@@ -55,6 +53,30 @@ export default function Navbar() {
         </div>
       </div>
     </nav>
+  )
+}
+
+function ThisBreadcrumb() {
+  const location = useLocation()
+  const { id } = useParams<{ id: string }>()
+
+  const items: BreadcrumbItem[] = [{ label: "Home", to: ROUTES.WELCOME }]
+  
+  const path = location.pathname
+  const pathIsInGuild = path.startsWith(ROUTES.GUILD.ROOT.split(":")[0])
+
+  if (path.startsWith(ROUTES.DASHBOARD) || pathIsInGuild) {
+    items.push({ label: "Dashboard", to: ROUTES.DASHBOARD })
+  }
+
+  if (pathIsInGuild) {
+    items.push({ label: "Guild", to: ROUTES.GUILD.ROOT.replace(":id", id || "") })
+  }
+
+  console.log("Breadcrumb items:", items)
+
+  return (
+    <Breadcrumb items={items} />
   )
 }
 
