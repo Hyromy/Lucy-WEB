@@ -9,7 +9,8 @@ import { Breadcrumb } from "../components/Breadcrum"
 import { Divider } from "../components/Divider"
 import { MemoryRouter } from "react-router-dom"
 import type { GuildResponse } from "../types/api"
-import { Dropdown } from "../components/Dropdown"
+import { Dropdown, type DropdownOption } from "../components/Dropdown"
+import type { ReactNode } from "react"
 
 window.HTMLElement.prototype.scrollIntoView = vi.fn()
 
@@ -20,11 +21,11 @@ vi.mock("../hooks/useLanguage", () => ({
 }))
 
 vi.mock("@radix-ui/react-dropdown-menu", () => ({
-  Root: ({ children }: any) => <div>{children}</div>,
-  Trigger: ({ children }: any) => <div>{children}</div>,
-  Portal: ({ children }: any) => <div>{children}</div>,
-  Content: ({ children }: any) => <div role="menu">{children}</div>,
-  Item: ({ children, onSelect }: any) => (
+  Root: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  Trigger: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  Portal: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  Content: ({ children }: { children: ReactNode }) => <div role="menu">{children}</div>,
+  Item: ({ children, onSelect }: { children: ReactNode; onSelect?: () => void }) => (
     <div role="menuitem" onClick={() => onSelect?.() }>{children}</div>
   ),
 }))
@@ -356,13 +357,13 @@ describe("Components", () => {
   describe("Dropdown", () => {
     it("renders trigger label fallback and calls onChange when option selected", async () => {
       const handle = vi.fn()
-      const options = [
+      const options: DropdownOption<"one" | "two">[] = [
         { label: "One", value: "one" },
         { label: "Two", value: "two", triggerLabel: "Dos" },
       ] as const
 
       render(
-        <Dropdown value={"one"} options={options as any} onChange={handle} />
+        <Dropdown value={"one"} options={options} onChange={handle} />
       )
 
       // trigger button exists
@@ -381,7 +382,7 @@ describe("Components", () => {
 
     it("handles empty options array without throwing", () => {
       const handle = vi.fn()
-      render(<Dropdown value={"" as any} options={[] as any} onChange={handle} />)
+      render(<Dropdown value={"" as string} options={[] as DropdownOption<"">[]} onChange={handle} />)
 
       const trigger = screen.getByRole("button")
       expect(trigger).toBeTruthy()
