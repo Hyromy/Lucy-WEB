@@ -29,18 +29,24 @@ vi.mock("../layouts/Main", () => ({
   default: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }))
 
+vi.mock("../hooks/useLanguage", () => ({
+  default: () => ({
+    t: (key: string) => `translated:${key}`,
+  }),
+}))
+
 describe("Pages", () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   describe("AuthCallback", () => {
-    it("renders authentication message", () => {
+    it("renders loading state", () => {
       refreshMeMock.mockResolvedValue(undefined)
 
       render(<AuthCallback />)
 
-      expect(screen.getByText("Authenticating...")).toBeTruthy()
+      expect(screen.getByLabelText("loading")).toBeTruthy()
     })
 
     it("navigates to dashboard when refresh succeeds", async () => {

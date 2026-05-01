@@ -16,6 +16,11 @@ export const translations = {
   en: {
     "save": "Save",
 
+    "state.loading.title": "Loading",
+    "state.loading.message": "Please wait a moment...",
+    "state.empty.title": "No results",
+    "state.empty.message": "There is nothing to show right now.",
+
     "nav.login": "Login",
     "nav.theme.light": "Light",
     "nav.theme.dark": "Dark",
@@ -48,6 +53,11 @@ export const translations = {
   },
   es: {
     "save": "Guardar",
+
+    "state.loading.title": "Cargando",
+    "state.loading.message": "Por favor, espera un momento...",
+    "state.empty.title": "Sin resultados",
+    "state.empty.message": "No hay nada para mostrar en este momento.",
 
     "nav.login": "Iniciar",
     "nav.theme.light": "Claro",

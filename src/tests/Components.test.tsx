@@ -7,6 +7,12 @@ import { Form, Option, Select } from "../components/Form"
 import { OffCanvas } from "../components/OffCanvas"
 import { Breadcrumb } from "../components/Breadcrum"
 import { Divider } from "../components/Divider"
+import {
+  LoadingState,
+  ErrorState,
+  EmptyState,
+  StateGate
+} from "../components/State"
 import { MemoryRouter } from "react-router-dom"
 import type { GuildResponse } from "../types/api"
 import { Dropdown, type DropdownOption } from "../components/Dropdown"
@@ -390,6 +396,105 @@ describe("Components", () => {
 
       // nothing to select, but should not throw; ensure trigger still present
       expect(screen.getByRole("button")).toBeTruthy()
+    })
+  })
+
+  describe("State Components", () => {
+    describe("LoadingState", () => {
+      it("renders with default translated title and message", () => {
+        render(<LoadingState />)
+        expect(screen.getByText("translated:state.loading.title")).toBeTruthy()
+        expect(screen.getByText("translated:state.loading.message")).toBeTruthy()
+        expect(screen.getByLabelText("loading")).toBeTruthy()
+      })
+
+      it("renders with custom title and message", () => {
+        render(<LoadingState title="Custom Title" message="Custom Message" />)
+        expect(screen.getByText("Custom Title")).toBeTruthy()
+        expect(screen.getByText("Custom Message")).toBeTruthy()
+      })
+    })
+
+    describe("ErrorState", () => {
+      it("renders error title and message", () => {
+        render(<ErrorState title="Fail" message="Oh no" />)
+        expect(screen.getByText("Fail")).toBeTruthy()
+        expect(screen.getByText("Oh no")).toBeTruthy()
+      })
+
+      it("calls onRetry when retry button is clicked", () => {
+        const handleRetry = vi.fn()
+        render(<ErrorState onRetry={handleRetry} retryLabel="Try Again" />)
+
+        const button = screen.getByRole("button", { name: "Try Again" })
+        fireEvent.click(button)
+        expect(handleRetry).toHaveBeenCalledTimes(1)
+      })
+    })
+
+    describe("EmptyState", () => {
+      it("renders with default translations", () => {
+        render(<EmptyState />)
+        expect(screen.getByText("translated:state.empty.title")).toBeTruthy()
+        expect(screen.getByText("translated:state.empty.message")).toBeTruthy()
+      })
+
+      it("renders custom action node", () => {
+        render(<EmptyState action={<button>Add Now</button>} />)
+        expect(screen.getByRole("button", { name: "Add Now" })).toBeTruthy()
+      })
+    })
+
+    describe("StateGate", () => {
+      it("shows loading state when loading is true", () => {
+        render(
+          <StateGate loading={true} error={null} data={null}>
+            <div>Content</div>
+          </StateGate>
+        )
+        expect(screen.getByLabelText("loading")).toBeTruthy()
+        expect(screen.queryByText("Content")).toBeNull()
+      })
+
+      it("shows error state when error is provided", () => {
+        const error = new Error("API Crack")
+        render(
+          <StateGate loading={false} error={error} data={null}>
+            <div>Content</div>
+          </StateGate>
+        )
+        expect(screen.getByText("API Crack")).toBeTruthy()
+        expect(screen.queryByText("Content")).toBeNull()
+      })
+
+      it("shows empty state when data exists but isEmpty is true", () => {
+        render(
+          <StateGate loading={false} error={null} data={[]} isEmpty={true}>
+            <div>Content</div>
+          </StateGate>
+        )
+        expect(screen.getByText("translated:state.empty.title")).toBeTruthy()
+        expect(screen.queryByText("Content")).toBeNull()
+      })
+
+      it("returns null when no data and not loading/error", () => {
+        const { container } = render(
+          <StateGate loading={false} error={null} data={null}>
+            <div>Content</div>
+          </StateGate>
+        )
+        expect(container.firstChild).toBeNull()
+      })
+
+      it("renders children when data is present and no loading/error", () => {
+        render(
+          <StateGate loading={false} error={null} data={{ id: 1 }}>
+            <div data-testid="child">Actual Content</div>
+          </StateGate>
+        )
+        expect(screen.getByTestId("child")).toBeTruthy()
+        expect(screen.getByText("Actual Content")).toBeTruthy()
+      })
     })
   })
 })

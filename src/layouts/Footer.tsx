@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react"
 import { SiDiscord, SiGithub } from "@icons-pack/react-simple-icons"
 import { Link } from "react-router-dom"
 import useLanguage from "../hooks/useLanguage"
+import { Divider } from "../components/Divider"
 
 
 const getRandomEmojis = (): string[] => {
@@ -63,8 +64,8 @@ export default function Footer() {
   return (
     <footer className="dark bg-card text-fg border-t border-border py-8">
       <div className="mx-auto max-w-5xl px-4">
-        <hr className="my-4 border-border" />
-        <div className="flex justify-center gap-6 text-sm text-muted">
+        <Divider />
+        <div className="flex justify-center gap-6 my-4">
           <Link to={"https://discord.com/users/608870766586494976"} target="_blank">
             <SiDiscord size={40} className="text-fg" />
           </Link>
@@ -72,8 +73,8 @@ export default function Footer() {
             <SiGithub size={40} className="text-fg" />
           </Link>
         </div>
-        <hr className="my-4 border-border" />
-        <div className="flex justify-center">
+        <Divider />
+        <div className="flex justify-center mt-4">
           <small className="text-muted">
             {t("footer.madeWith")} <span ref={emojiRef} /><span className="cursor-blink" /> {t("footer.author")}
           </small>
