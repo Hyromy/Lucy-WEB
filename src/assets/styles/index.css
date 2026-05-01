@@ -17,8 +17,6 @@
     --color-border: var(--border);
     --color-muted: var(--muted);
 
-    --spacing-nav-h: 4rem;
-
     @keyframes cursor-blink {
         0%, 100% { opacity: 1; }
         50% { opacity: 0; }

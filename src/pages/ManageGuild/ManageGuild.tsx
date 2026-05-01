@@ -43,7 +43,7 @@ export default function ManageGuild() {
   return (
     <Main>
       <div className="flex items-start">
-        <div className="hidden lg:block">
+        <div className="hidden lg:block h-fit sticky top-18">
           <Aside />
         </div>
         <div className="lg:hidden">
@@ -79,8 +79,7 @@ function Aside({ closeCanvas }: { closeCanvas?: () => void }) {
   return (
     <aside 
       className="
-        w-72 lg:pe-2 lg:me-2 lg:border-r border-border lg:sticky lg:top-nav-h
-        flex flex-col gap-1
+        w-72 lg:pe-2 lg:me-2 lg:border-r border-border flex flex-col gap-1
       "
     >
       {GUILD_MODULES_CONFIG.map((module) => (

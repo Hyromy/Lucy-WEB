@@ -24,56 +24,60 @@ import { useLocation, useParams } from "react-router-dom"
 const size = 20
 const flagSize = size * 1.4
 
-export default function Navbar() {
+export default function Header() {
   const { hasSidebar, setOpen, activeSidebar } = useSidebar()
 
   return (
-    <nav 
-      className="
-        sticky top-0 z-40 border-b border-border bg-card/85 backdrop-blur
-        h-nav-h flex items-center
-      "
-    >
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between p-2">
-        <div className="flex items-center gap-2">
-          {hasSidebar && (
-            <button 
-              onClick={() => setOpen(activeSidebar == "navigation" ? null : "navigation")} 
-              className="lg:hidden p-1 -ml-1 rounded-md hover:bg-border/50"
-            >
-              <Menu size={size} />
-            </button>
-          )}
+    <header className="sticky top-0 z-40 bg-card/85 backdrop-blur flex flex-col">
+      <section className="border-b border-border">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between p-2">
+          <div className="flex items-center gap-2">
+            {hasSidebar && (
+              <button 
+                onClick={() => setOpen(activeSidebar == "navigation" ? null : "navigation")} 
+                className="lg:hidden p-1 -ml-1 rounded-md hover:bg-border/50"
+              >
+                <Menu size={size} />
+              </button>
+            )}
+            <div className="hidden sm:block">
+              <ThisBreadcrumb />
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <LangSelector />
+            <ThemeSelector />
+            <DiscordButton />
+          </div>
+        </div>
+      </section>
+      <section className="sm:hidden">
+        <div className="px-4 py-1 border-b border-border">
           <ThisBreadcrumb />
         </div>
-        <div className="flex gap-2">
-          <LangSelector />
-          <ThemeSelector />
-          <DiscordButton />
-        </div>
-      </div>
-    </nav>
+      </section>
+    </header>
   )
 }
 
 function ThisBreadcrumb() {
+  const { t } = useLanguage()
+
   const location = useLocation()
   const { id } = useParams<{ id: string }>()
 
-  const items: BreadcrumbItem[] = [{ label: "Home", to: ROUTES.WELCOME }]
+  const items: BreadcrumbItem[] = [{ label: t("nav.nav.home"), to: ROUTES.WELCOME }]
   
   const path = location.pathname
   const pathIsInGuild = path.startsWith(ROUTES.GUILD.ROOT.split(":")[0])
 
   if (path.startsWith(ROUTES.DASHBOARD) || pathIsInGuild) {
-    items.push({ label: "Dashboard", to: ROUTES.DASHBOARD })
+    items.push({ label: t("nav.nav.dashboard"), to: ROUTES.DASHBOARD })
   }
 
   if (pathIsInGuild) {
-    items.push({ label: "Guild", to: ROUTES.GUILD.ROOT.replace(":id", id || "") })
+    items.push({ label: t("nav.nav.guild"), to: ROUTES.GUILD.ROOT.replace(":id", id || "") })
   }
-
-  console.log("Breadcrumb items:", items)
 
   return (
     <Breadcrumb items={items} />
