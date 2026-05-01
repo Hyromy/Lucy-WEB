@@ -4,7 +4,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 import { Button } from "../components/Button"
 import { Card, GuildCard } from "../components/Card"
 import { Form, Option, Select } from "../components/Form"
+import { OffCanvas } from "../components/OffCanvas"
+import { Breadcrumb } from "../components/Breadcrum"
+import { Divider } from "../components/Divider"
+import { MemoryRouter } from "react-router-dom"
 import type { GuildResponse } from "../types/api"
+import { Dropdown } from "../components/Dropdown"
 
 window.HTMLElement.prototype.scrollIntoView = vi.fn()
 
@@ -12,6 +17,16 @@ vi.mock("../hooks/useLanguage", () => ({
   default: () => ({
     t: (key: string) => `translated:${key}`,
   }),
+}))
+
+vi.mock("@radix-ui/react-dropdown-menu", () => ({
+  Root: ({ children }: any) => <div>{children}</div>,
+  Trigger: ({ children }: any) => <div>{children}</div>,
+  Portal: ({ children }: any) => <div>{children}</div>,
+  Content: ({ children }: any) => <div role="menu">{children}</div>,
+  Item: ({ children, onSelect }: any) => (
+    <div role="menuitem" onClick={() => onSelect?.() }>{children}</div>
+  ),
 }))
 
 describe("Components", () => {
@@ -202,6 +217,178 @@ describe("Components", () => {
       fireEvent.click(screen.getByText("Clickable Guild"))
 
       expect(handleClick).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe("OffCanvas", () => {
+    it("toggles body overflow and closes on overlay click", () => {
+      const onClose = vi.fn()
+
+      const { rerender } = render(
+        <OffCanvas isOpen={false} onClose={onClose} title="Panel">
+          <div>Contenido</div>
+        </OffCanvas>
+      )
+
+      expect(document.body.style.overflow).toBe("unset")
+
+      rerender(
+        <OffCanvas isOpen={true} onClose={onClose} title="Panel">
+          <div>Contenido</div>
+        </OffCanvas>
+      )
+
+      expect(document.body.style.overflow).toBe("hidden")
+      expect(screen.getByText("Panel")).toBeTruthy()
+
+      const overlay = Array.from(document.querySelectorAll("div")).find((el) =>
+        (el.className || "").includes("bg-black")
+      )
+
+      expect(overlay).toBeTruthy()
+      if (overlay) fireEvent.click(overlay)
+
+      expect(onClose).toHaveBeenCalledTimes(1)
+    })
+
+    it("resets body overflow on unmount and closes with close button", () => {
+      const onClose = vi.fn()
+
+      const { rerender, unmount } = render(
+        <OffCanvas isOpen={false} onClose={onClose} title="Panel">
+          <div>Contenido</div>
+        </OffCanvas>
+      )
+
+      // open it
+      rerender(
+        <OffCanvas isOpen={true} onClose={onClose} title="Panel">
+          <div>Contenido</div>
+        </OffCanvas>
+      )
+
+      expect(document.body.style.overflow).toBe("hidden")
+
+      // close using close button inside aside
+      const aside = document.querySelector("aside")
+      const closeButton = aside?.querySelector("button") as HTMLButtonElement | null
+      expect(closeButton).toBeTruthy()
+      if (closeButton) fireEvent.click(closeButton)
+
+      expect(onClose).toHaveBeenCalledTimes(1)
+
+      // unmount should reset overflow
+      unmount()
+      expect(document.body.style.overflow).toBe("unset")
+    })
+  })
+
+  describe("Breadcrumb", () => {
+    it("renders items and separator icon", () => {
+      const items = [
+        { label: "Home", to: "/" },
+        { label: "Guilds", to: "/guilds" },
+      ]
+
+      render(
+        <MemoryRouter>
+          <Breadcrumb items={items} />
+        </MemoryRouter>
+      )
+
+      expect(screen.getByText("Home")).toBeTruthy()
+      expect(screen.getByText("Guilds")).toBeTruthy()
+      expect(document.querySelector("svg")).toBeTruthy()
+    })
+
+    it("single item does not render separator", () => {
+      const items = [{ label: "Solo", to: "/" }]
+
+      render(
+        <MemoryRouter>
+          <Breadcrumb items={items} />
+        </MemoryRouter>
+      )
+
+      expect(screen.getByText("Solo")).toBeTruthy()
+      // no separator svg when only one item
+      const svgs = document.querySelectorAll("svg")
+      expect(svgs.length).toBe(0)
+    })
+  })
+
+  describe("Divider", () => {
+    it("renders a full line when no text and shows text when provided", () => {
+      const { rerender } = render(<Divider />)
+      expect(document.querySelector(".bg-border")).toBeTruthy()
+
+      rerender(<Divider text={<span>Separa</span>} />)
+      expect(screen.getByText("Separa")).toBeTruthy()
+
+      const borders = Array.from(document.querySelectorAll("div")).filter((d) =>
+        (d.className || "").includes("bg-border")
+      )
+      expect(borders.length).toBeGreaterThanOrEqual(2)
+    })
+
+    it("handles null/undefined text and complex nodes", () => {
+      const { rerender } = render(<Divider text={null as unknown as string} />)
+      // should render a single border element when text is null
+      let borders = Array.from(document.querySelectorAll("div")).filter((d) =>
+        (d.className || "").includes("bg-border")
+      )
+      expect(borders.length).toBeGreaterThanOrEqual(1)
+
+      // complex node
+      rerender(
+        <Divider text={<><span>Part1</span><strong>Part2</strong></>} />
+      )
+
+      expect(screen.getByText("Part1")).toBeTruthy()
+      expect(screen.getByText("Part2")).toBeTruthy()
+      borders = Array.from(document.querySelectorAll("div")).filter((d) =>
+        (d.className || "").includes("bg-border")
+      )
+      expect(borders.length).toBeGreaterThanOrEqual(2)
+    })
+  })
+
+  describe("Dropdown", () => {
+    it("renders trigger label fallback and calls onChange when option selected", async () => {
+      const handle = vi.fn()
+      const options = [
+        { label: "One", value: "one" },
+        { label: "Two", value: "two", triggerLabel: "Dos" },
+      ] as const
+
+      render(
+        <Dropdown value={"one"} options={options as any} onChange={handle} />
+      )
+
+      // trigger button exists
+      const trigger = screen.getByRole("button")
+      expect(trigger).toBeTruthy()
+
+      // open menu
+      fireEvent.click(trigger)
+
+      // wait for option to appear and click it
+      const optionEl = await screen.findByText("Two")
+      fireEvent.click(optionEl)
+
+      expect(handle).toHaveBeenCalledWith("two")
+    })
+
+    it("handles empty options array without throwing", () => {
+      const handle = vi.fn()
+      render(<Dropdown value={"" as any} options={[] as any} onChange={handle} />)
+
+      const trigger = screen.getByRole("button")
+      expect(trigger).toBeTruthy()
+      fireEvent.click(trigger)
+
+      // nothing to select, but should not throw; ensure trigger still present
+      expect(screen.getByRole("button")).toBeTruthy()
     })
   })
 })
