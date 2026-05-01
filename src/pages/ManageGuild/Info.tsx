@@ -1,5 +1,6 @@
 import { useOutletContext } from "react-router-dom"
 import type { GuildResponse } from "../../types/api"
+import { StateGate } from "../../components/State"
 
 export default function Info() {
   const { data, loading, error } = useOutletContext<{
@@ -8,13 +9,15 @@ export default function Info() {
     error: Error | null
   }>()
 
-  if (loading) return <p>Loading</p>
-  if (error) return <p>{error.message}</p>
-  if (!data) return <p>No data</p>
-
   return (
-    <pre>
-      {JSON.stringify(data, null, 4)}
-    </pre>
+    <StateGate
+      data={data}
+      error={error}
+      loading={loading}
+    >
+      <pre>
+        {JSON.stringify(data, null, 4)}
+      </pre>
+    </StateGate>
   )
 }

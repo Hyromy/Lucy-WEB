@@ -1,5 +1,7 @@
 import axios, { type AxiosRequestConfig } from "axios"
 
+const DEFAULT_TIMEOUT_MS = 15000
+
 export class ApiError extends Error {
   readonly source = "api"
   readonly originalError: unknown
@@ -12,6 +14,7 @@ export class ApiError extends Error {
 }
 
 const client = axios.create({
+  timeout: DEFAULT_TIMEOUT_MS,
   withCredentials: true,
   withXSRFToken: true,
   xsrfCookieName: "csrftoken",
@@ -27,7 +30,15 @@ client.interceptors.response.use(
   (error: unknown) => {
     const fallbackMessage = "An unknown error occurred while making the API request."
 
+    if (axios.isCancel(error)) {
+      return Promise.reject(new ApiError("The request was canceled.", error))
+    }
+
     if (axios.isAxiosError<{ message?: string }>(error)) {
+      if (error.code == "ECONNABORTED") {
+        return Promise.reject(new ApiError("The request timed out.", error))
+      }
+
       const message = error.response?.data?.message || fallbackMessage
       return Promise.reject(new ApiError(message, error))
     }
@@ -40,19 +51,24 @@ client.interceptors.response.use(
   }
 )
 
+const withTimeout = (config?: AxiosRequestConfig) => ({
+  timeout: config?.timeout ?? DEFAULT_TIMEOUT_MS,
+  ...config,
+})
+
 export const api = {
   get: <T>(url: string, config?: AxiosRequestConfig) =>
-    client.get<T>(url, config) as unknown as Promise<T>,
+    client.get<T>(url, withTimeout(config)) as unknown as Promise<T>,
 
   post: <T>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
-    client.post<T>(url, data, config) as unknown as Promise<T>,
+    client.post<T>(url, data, withTimeout(config)) as unknown as Promise<T>,
   
   put: <T>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
-    client.put<T>(url, data, config) as unknown as Promise<T>,
+    client.put<T>(url, data, withTimeout(config)) as unknown as Promise<T>,
   
   patch: <T>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
-    client.patch<T>(url, data, config) as unknown as Promise<T>,
+    client.patch<T>(url, data, withTimeout(config)) as unknown as Promise<T>,
   
   delete: <T>(url: string, config?: AxiosRequestConfig) =>
-    client.delete<T>(url, config) as unknown as Promise<T>,
+    client.delete<T>(url, withTimeout(config)) as unknown as Promise<T>,
 }

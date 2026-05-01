@@ -26,7 +26,7 @@ export default function ManageGuild() {
       return
     }
 
-    request(discordService.guilds(id))
+    request((signal) => discordService.guilds(id, { signal }))
   }, [id, request])
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function ManageGuild() {
 
   return (
     <Main>
-      <div className="flex items-start">
+      <div className="flex flex-1 items-start">
         <div className="hidden lg:block h-fit sticky top-18">
           <Aside />
         </div>
@@ -55,7 +55,7 @@ export default function ManageGuild() {
             <Aside closeCanvas={openNull} />
           </OffCanvas>
         </div>
-        <section className="flex-1">
+        <section className="flex flex-1 flex-col self-stretch">
           <Outlet context={{ data, error, loading: !data && !error }} />
         </section>
       </div>
