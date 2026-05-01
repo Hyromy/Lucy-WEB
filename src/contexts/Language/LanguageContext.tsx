@@ -20,13 +20,18 @@ export const translations = {
     "nav.theme.light": "Light",
     "nav.theme.dark": "Dark",
     "nav.theme.system": "System",
+    "nav.nav.home": "Home",
+    "nav.nav.dashboard": "Dashboard",
+    "nav.nav.guild": "Guild",
 
     "footer.madeWith": "Made with",
     "footer.author": "by Hyromy",
     
     "index.title": "Preparing something awesome...",
+    "index.pleaseLogin": "Please log in to access the dashboard.",
+    "index.dashboardLink": "Go to Dashboard",
 
-    "notFound.title": "Page Not Found",
+    "notFound.title": "Page not found",
     "notFound.message": "The page you are looking for does not exist.",
     
     "dashboard.title": "Your Servers",
@@ -44,16 +49,21 @@ export const translations = {
   es: {
     "save": "Guardar",
 
-    "nav.login": "Iniciar sesión",
+    "nav.login": "Iniciar",
     "nav.theme.light": "Claro",
     "nav.theme.dark": "Oscuro",
     "nav.theme.system": "Sistema",
+    "nav.nav.home": "Inicio",
+    "nav.nav.dashboard": "Panel",
+    "nav.nav.guild": "Servidor",
     
     "footer.madeWith": "Hecho con",
     "footer.author": "por Hyromy",
     
     "index.title": "Preparando algo increíble...",
-    
+    "index.pleaseLogin": "Por favor, inicia sesión para acceder al panel.",
+    "index.dashboardLink": "Ir al Panel",
+
     "notFound.title": "Página no encontrada",
     "notFound.message": "La página que buscas no existe.",
     

@@ -1,5 +1,9 @@
-import { Link } from "react-router-dom"
-import { Moon, Sun, Contrast } from "lucide-react"
+import {
+  Moon,
+  Sun,
+  Contrast,
+  Menu,
+} from "lucide-react"
 import { SiDiscord } from "@icons-pack/react-simple-icons"
 import Flag from "react-flagkit"
 
@@ -13,30 +17,70 @@ import useAuth from "../hooks/useAuth"
 import type { Language } from "../contexts/Language/LanguageContext"
 import useTheme from "../hooks/useTheme"
 import type { Theme } from "../contexts/Theme/ThemeContext"
-
+import useSidebar from "../hooks/useSidebar"
+import { Breadcrumb, type BreadcrumbItem } from "../components/Breadcrum"
+import { useLocation, useParams } from "react-router-dom"
 
 const size = 20
 const flagSize = size * 1.4
 
-export default function Navbar() {
+export default function Header() {
+  const { hasSidebar, setOpen, activeSidebar } = useSidebar()
+
   return (
-    <nav 
-      className="
-        sticky top-0 z-100 border-b border-[rgb(var(--border))] bg-[rgb(var(--card))]/80 backdrop-blur
-        h-[var(--nav-h)] flex items-center
-      "
-    >
-      <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between px-2">
-        <Link to={ROUTES.WELCOME} className="text-sm font-semibold tracking-wide">
-          Lucy
-        </Link>
-        <div className="flex items-center gap-3">
-          <DiscordButton />
-          <LangSelector />
-          <ThemeSelector />
+    <header className="sticky top-0 z-40 bg-card/85 backdrop-blur flex flex-col">
+      <section className="border-b border-border">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between p-2">
+          <div className="flex items-center gap-2">
+            {hasSidebar && (
+              <button 
+                onClick={() => setOpen(activeSidebar == "navigation" ? null : "navigation")} 
+                className="lg:hidden p-1 -ml-1 rounded-md hover:bg-border/50"
+              >
+                <Menu size={size} />
+              </button>
+            )}
+            <div className="hidden sm:block">
+              <ThisBreadcrumb />
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <LangSelector />
+            <ThemeSelector />
+            <DiscordButton />
+          </div>
         </div>
-      </div>
-    </nav>
+      </section>
+      <section className="sm:hidden">
+        <div className="px-4 py-1 border-b border-border">
+          <ThisBreadcrumb />
+        </div>
+      </section>
+    </header>
+  )
+}
+
+function ThisBreadcrumb() {
+  const { t } = useLanguage()
+
+  const location = useLocation()
+  const { id } = useParams<{ id: string }>()
+
+  const items: BreadcrumbItem[] = [{ label: t("nav.nav.home"), to: ROUTES.WELCOME }]
+  
+  const path = location.pathname
+  const pathIsInGuild = path.startsWith(ROUTES.GUILD.ROOT.split(":")[0])
+
+  if (path.startsWith(ROUTES.DASHBOARD) || pathIsInGuild) {
+    items.push({ label: t("nav.nav.dashboard"), to: ROUTES.DASHBOARD })
+  }
+
+  if (pathIsInGuild) {
+    items.push({ label: t("nav.nav.guild"), to: ROUTES.GUILD.ROOT.replace(":id", id || "") })
+  }
+
+  return (
+    <Breadcrumb items={items} />
   )
 }
 
@@ -67,16 +111,21 @@ function DiscordButton() {
       onClick={logout}
       size="md"
       isLoading={loading}
-      className="max-w-[220px] px-2 py-1.5"
+      className="px-2 py-1.5"
     >
-      <span className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] text-xs font-semibold text-[rgb(var(--fg))]">
+      <span
+        className="
+          flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border
+          bg-bg text-xs font-semibold text-foreground
+        "
+      >
         {avatarUrl ? (
           <img src={avatarUrl} alt={userDisplayName} className="h-full w-full object-cover" />
         ) : (
           userInitial
         )}
       </span>
-      <span className="max-w-[150px] truncate text-left font-semibold">
+      <span className="max-w-32 truncate font-semibold">
         {userDisplayName}
       </span>
     </Button>

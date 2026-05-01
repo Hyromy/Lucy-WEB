@@ -2,15 +2,16 @@ export const ROUTES = {
   WELCOME: "/",
   AUTH_CALLBACK: "/auth/callback",
   DASHBOARD: "/dashboard",
+  
   GUILD: {
     ROOT: "/guild/:id",
-    MODULES: {
-      CONFIG: "config",
-      INFO: "info",
-    } as { [Key in string]: GUILD_MODULE_KEY },
   },
 } as const
 
+export const GUILD_MODULES = {
+  CONFIG: "config",
+  INFO: "info",
+} as const 
+
 export type GUILD_MODULE_KEY =
-"config" |
-"info"
+  typeof GUILD_MODULES[keyof typeof GUILD_MODULES]

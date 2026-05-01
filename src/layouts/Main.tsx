@@ -1,13 +1,13 @@
 import type { ReactNode } from "react"
 
-import Navbar from "./Navbar"
+import Header from "./Header"
 import Footer from "./Footer"
 
 export default function Main({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col">
-      <Navbar />
-      <main className="mx-auto max-w-7xl w-full p-2">
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      <main className="flex flex-col flex-1 p-2 px-4 max-w-7xl mx-auto w-full">
         {children}
       </main>
       <Footer />

@@ -6,6 +6,7 @@ import useAuth from "../hooks/useAuth"
 import useEvent from "../hooks/useEvent"
 import useLanguage from "../hooks/useLanguage"
 import useTheme from "../hooks/useTheme"
+import useSidebar from "../hooks/useSidebar"
 
 class MockEventSource {
   static instances: MockEventSource[] = []
@@ -190,6 +191,12 @@ describe("Hooks", () => {
     it("throws when useAuth is used outside provider", () => {
       expect(() => renderHook(() => useAuth())).toThrowError(
         "useAuth must be used within an AuthProvider"
+      )
+    })
+
+    it("throws when useSidebar is used outside provider", () => {
+      expect(() => renderHook(() => useSidebar())).toThrowError(
+        "useSidebar must be used within a SidebarProvider"
       )
     })
   })

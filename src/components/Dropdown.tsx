@@ -31,13 +31,16 @@ export function Dropdown<T extends string>({
       <DropdownMenu.Trigger asChild>
         <button
           type="button"
-          className={`inline-flex items-center gap-2 rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm font-medium transition hover:bg-[rgb(var(--bg))] ${className}`}
+          className={`
+            inline-flex items-center gap-2 rounded-lg border border-border
+            px-3 py-2 text-sm font-medium ${className}
+          `}
         >
           <span className="flex items-center gap-2">
             {prefix} {displayLabel}
           </span>
 
-          <ChevronDown size={12} className="text-[rgb(var(--muted))] transition-transform data-[state=open]:rotate-180" />
+          <ChevronDown size={12} className="text-muted transition-transform" />
         </button>
       </DropdownMenu.Trigger>
 
@@ -45,7 +48,7 @@ export function Dropdown<T extends string>({
         <DropdownMenu.Content
           sideOffset={8}
           align="end"
-          className="z-50 min-w-44 rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-1 shadow-lg"
+          className="z-50 min-w-44 rounded-xl border border-border bg-card p-1 shadow-lg"
         >
           {options.map((option) => {
             const selected = option.value == value
@@ -56,8 +59,8 @@ export function Dropdown<T extends string>({
                 onSelect={() => onChange(option.value)}
                 className={`cursor-pointer rounded-lg px-3 py-2 text-sm outline-none transition ${
                   selected
-                    ? "bg-[rgb(var(--primary))] text-[rgb(var(--primary-fg))]"
-                    : "hover:bg-[rgb(var(--bg))]"
+                    ? "bg-primary text-primary-fg"
+                    : "hover:bg-bg"
                 }`}
               >
                 {option.label}

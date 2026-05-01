@@ -4,9 +4,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 import { AuthProvider } from "../contexts/Auth/AuthProvider"
 import { LanguageProvider } from "../contexts/Language/LanguageProvider"
 import { ThemeProvider } from "../contexts/Theme/ThemeProvider"
+import { SidebarProvider } from "../contexts/Sidebar/SidebarProvider"
 import useAuth from "../hooks/useAuth"
 import useLanguage from "../hooks/useLanguage"
 import useTheme from "../hooks/useTheme"
+import useSidebar from "../hooks/useSidebar"
 import { ROUTES } from "../routes/paths"
 
 const { navigateMock, meMock, logoutMock } = vi.hoisted(() => ({
@@ -268,6 +270,38 @@ describe("Providers", () => {
 
       expect(screen.getByTestId("auth-value").textContent).toBe("false")
       expect(screen.getByTestId("user-value").textContent).toBe("")
+    })
+  })
+
+  describe("SidebarProvider", () => {
+    it("provides sidebar state and setters", () => {
+      function Harness() {
+        const { activeSidebar, setOpen, hasSidebar, setHasSidebar } = useSidebar()
+
+        return (
+          <div>
+            <span data-testid="active">{String(activeSidebar)}</span>
+            <span data-testid="has">{String(hasSidebar)}</span>
+            <button onClick={() => setOpen("navigation")}>open-nav</button>
+            <button onClick={() => setHasSidebar(true)}>set-has</button>
+          </div>
+        )
+      }
+
+      render(
+        <SidebarProvider>
+          <Harness />
+        </SidebarProvider>
+      )
+
+      expect(screen.getByTestId("active").textContent).toBe("null")
+      expect(screen.getByTestId("has").textContent).toBe("false")
+
+      fireEvent.click(screen.getByRole("button", { name: "open-nav" }))
+      expect(screen.getByTestId("active").textContent).toBe("navigation")
+
+      fireEvent.click(screen.getByRole("button", { name: "set-has" }))
+      expect(screen.getByTestId("has").textContent).toBe("true")
     })
   })
 })

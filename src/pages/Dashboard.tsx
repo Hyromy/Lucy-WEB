@@ -17,6 +17,7 @@ import {
   DISCORD_BOT_PERMISSIONS,
   DISCORD_BOT_SCOPES
 } from "../constants/config"
+import { Divider } from "../components/Divider"
 
 const urlInviteGuild = (guildID: string) => (
   "https://discord.com/oauth2/authorize?" +
@@ -86,10 +87,10 @@ export default function Dashboard() {
 
     return (
       <div>
-        <h2>{title}</h2>
+        <Divider text={<h3 className="text-2xl">{title}</h3>} />
         <div className="flex flex-wrap justify-center items-stretch gap-3 p-3">
           {guilds.map((guild) => (
-            <div key={guild.id} className="w-[320px] max-w-full">
+            <div key={guild.id} className="w-80 max-w-full">
               <GuildCard 
                 guild={guild} 
                 onClick={() => onClick(guild)}
@@ -102,24 +103,24 @@ export default function Dashboard() {
   }
 
   const content = loadingApi
-    ? <p className="text-[rgb(var(--muted))]">Loading...</p>
+    ? <p className="text-muted">Loading...</p>
     : data && (
-      <>
+      <section className="flex flex-col gap-8">
         {renderGuildList(manageGuilds, t("dashboard.installed.title"), false)}
         {renderGuildList(installGuilds, t("dashboard.available.title"), true)}
-      </>
+      </section>
     )
 
   return (!authenticated && !loadingAuth) ? <NotFound /> : (
     <Main>
-      <header className="mb-10 px-6">
-        <h1 className="text-3xl font-bold text-[rgb(var(--fg))]">
+      <section className="text-center my-4">
+        <h2 className="text-3xl font-bold text-foreground">
           {t("dashboard.title")}
-        </h1>
-        <p className="text-[rgb(var(--muted))] mt-2">
+        </h2>
+        <p className="text-muted mt-2">
           {t("dashboard.description")}
         </p>
-      </header>
+      </section>
       {content}
     </Main>
   )
