@@ -17,14 +17,8 @@ import {
   DISCORD_BOT_PERMISSIONS,
   DISCORD_BOT_SCOPES
 } from "../constants/config"
-
-const urlInviteGuild = (guildID: string) => (
-  "https://discord.com/oauth2/authorize?" +
-  `client_id=${DISCORD_BOT_CLIENT_ID}` +
-  `&permissions=${DISCORD_BOT_PERMISSIONS}` +
-  `&scope=${DISCORD_BOT_SCOPES}` +
-  `&guild_id=${guildID}`
-)
+import { Divider } from "../components/Divider"
+import { StateGate, type StateGateProps } from "../components/State"
 
 type apiResponse = [
   LucyGuildResponse[],
@@ -37,18 +31,14 @@ export default function Dashboard() {
   const { t } = useLanguage()
   const navigate = useNavigate()
 
-  const sortGuilds = (guilds: GuildResponse[], installedIDS: Set<string>, isToManage: boolean) => (
-    guilds
-      .filter(g => isToManage ? installedIDS.has(g.id) : !installedIDS.has(g.id))
-      .sort((a, b) => a.name.localeCompare(b.name))
-  )
-
-  useEffect(() => {
+  const fetchGuilds = () => {
     request(
-      guildService.get(),
-      discordService.guilds(),
+      (signal) => guildService.get("", { signal }),
+      (signal) => discordService.guilds("", { signal }),
     )
-  }, [request])
+  }
+
+  useEffect(fetchGuilds, [request])
 
   useEffect(() => {
     if (error) {
@@ -85,11 +75,11 @@ export default function Dashboard() {
     }
 
     return (
-      <div>
-        <h2>{title}</h2>
+      <article>
+        <Divider text={<h3 className="text-2xl">{title}</h3>} />
         <div className="flex flex-wrap justify-center items-stretch gap-3 p-3">
           {guilds.map((guild) => (
-            <div key={guild.id} className="w-[320px] max-w-full">
+            <div key={guild.id} className="w-72 max-w-full">
               <GuildCard 
                 guild={guild} 
                 onClick={() => onClick(guild)}
@@ -97,30 +87,48 @@ export default function Dashboard() {
             </div>
           ))}
         </div>
-      </div>
+      </article>
     )
   }
 
-  const content = loadingApi
-    ? <p className="text-[rgb(var(--muted))]">Loading...</p>
-    : data && (
-      <>
-        {renderGuildList(manageGuilds, t("dashboard.installed.title"), false)}
-        {renderGuildList(installGuilds, t("dashboard.available.title"), true)}
-      </>
-    )
+  const stateGateValues: StateGateProps = {
+    data: data,
+    error: error,
+    loading: loadingApi,
+    isEmpty: manageGuilds.length <= 0 && installGuilds.length <= 0,
+    onRetry: fetchGuilds,
+  }
 
   return (!authenticated && !loadingAuth) ? <NotFound /> : (
     <Main>
-      <header className="mb-10 px-6">
-        <h1 className="text-3xl font-bold text-[rgb(var(--fg))]">
-          {t("dashboard.title")}
-        </h1>
-        <p className="text-[rgb(var(--muted))] mt-2">
-          {t("dashboard.description")}
-        </p>
-      </header>
-      {content}
+      <StateGate {...stateGateValues}>
+        <section className="text-center my-4">
+          <h2 className="text-3xl font-bold text-foreground">
+            {t("dashboard.title")}
+          </h2>
+          <p className="text-muted mt-2">
+            {t("dashboard.description")}
+          </p>
+        </section>
+        <section className="flex flex-col gap-8">
+          {renderGuildList(manageGuilds, t("dashboard.installed.title"), false)}
+          {renderGuildList(installGuilds, t("dashboard.available.title"), true)}
+        </section>
+      </StateGate>
     </Main>
   )
+}
+
+const urlInviteGuild = (guildID: string) => (
+  "https://discord.com/oauth2/authorize?" +
+  `client_id=${DISCORD_BOT_CLIENT_ID}` +
+  `&permissions=${DISCORD_BOT_PERMISSIONS}` +
+  `&scope=${DISCORD_BOT_SCOPES}` +
+  `&guild_id=${guildID}`
+)
+
+const sortGuilds = (guilds: GuildResponse[], installedIDS: Set<string>, isToManage: boolean) => {
+  return guilds
+    .filter(g => isToManage ? installedIDS.has(g.id) : !installedIDS.has(g.id))
+    .sort((a, b) => a.name.localeCompare(b.name))
 }

@@ -7,8 +7,8 @@ import Dashboard from "../pages/Dashboard"
 import NotFound from "../pages/NotFound"
 import AuthCallback from "../pages/AuthCallback"
 import ManageGuild from "../pages/ManageGuild/ManageGuild"
-import { ROUTES } from "./paths"
-import { GUILD_MODULES } from "./modules"
+import { GUILD_MODULES, ROUTES } from "./paths"
+import { GUILD_MODULES_CONFIG } from "./modules"
 
 export const routes: AppRoute[] = [
   {
@@ -31,9 +31,9 @@ export const routes: AppRoute[] = [
     children: [
       {
         index: true,
-        element: <Navigate to={ROUTES.GUILD.MODULES.CONFIG} replace />,
+        element: <Navigate to={GUILD_MODULES.CONFIG} replace />,
       },
-      ...GUILD_MODULES,
+      ...GUILD_MODULES_CONFIG,
     ],
   },
   {

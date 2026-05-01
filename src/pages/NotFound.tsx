@@ -7,8 +7,11 @@ export default function NotFound() {
 
   return (
     <Main>
-      <h1>{t("notFound.title")}</h1>
-      <p>{t("notFound.message")}</p>
+      <section className="flex flex-1 flex-col gap-2 items-center justify-center">
+        <p>404</p>
+        <h1 className="text-4xl text-center">{t("notFound.title")}</h1>
+        <p className="text-muted text-center">{t("notFound.message")}</p>
+      </section>
     </Main>
   )
 }

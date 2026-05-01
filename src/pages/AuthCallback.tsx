@@ -6,6 +6,7 @@ import Main from "../layouts/Main"
 import useAuth from "../hooks/useAuth"
 
 import { ROUTES } from "../routes/paths"
+import { StateGate } from "../components/State"
 
 export default function AuthCallback() {
   const navigate = useNavigate()
@@ -36,9 +37,11 @@ export default function AuthCallback() {
 
   return (
     <Main>
-      <p className="text-[rgb(var(--muted))]">
-        Authenticating...
-      </p>
+      <StateGate
+        loading={true}
+        error={null}
+        data={null}
+      />
     </Main>
   )
 }

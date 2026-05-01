@@ -9,6 +9,8 @@
     <title>Lucy</title>
     <script>
       (function () {
+        document.documentElement.classList.add("no-transitions")
+
         const key = "theme"
         const storedTheme = localStorage.getItem(key) || "system"
         const resolvedTheme =
@@ -21,6 +23,10 @@
 
         document.documentElement.classList.remove("light", "dark")
         document.documentElement.classList.add(resolvedTheme)
+
+        window.addEventListener("load", () => {
+          document.documentElement.classList.remove("no-transitions")
+        })
       })()
     </script>
   </head>

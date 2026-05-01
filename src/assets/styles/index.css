@@ -1,40 +1,89 @@
 @import "tailwindcss";
+
+@theme {
+    --color-bg: var(--bg);
+    --color-fg: var(--fg);
+
+    --color-primary: var(--primary);
+    --color-primary-fg: var(--primary-fg);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-fg: var(--secondary-fg);
+
+    --color-accent: var(--accent);
+    --color-accent-fg: var(--accent-fg);
+
+    --color-card: var(--card);
+    --color-border: var(--border);
+    --color-muted: var(--muted);
+
+    @keyframes cursor-blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+    }
+}
+
 :root {
-    --bg: 247 248 251;
-    --fg: 14 20 33;
-    --card: 255 255 255;
-    --muted: 96 110 133;
-    --border: 225 231 240;
-    --primary: 24 117 255;
-    --primary-fg: 255 255 255;
-    
-    --nav-h: 4rem;
+    --bg: rgb(248, 250, 252);
+    --fg: rgb(2, 5, 23);
+
+    --primary:    rgb(60, 131, 246);
+    --primary-fg: rgb(255, 255, 255);
+
+    --secondary:    rgb(124, 59, 237);
+    --secondary-fg: rgb(255, 255, 255);
+
+    --accent:    rgb(7, 182, 213);
+    --accent-fg: rgb(2, 6, 23);
+
+    --card:   rgb(255, 255, 255);
+    --muted:  rgb(100, 116, 139);
+    --border: rgb(209, 219, 231);
 }
 
 .dark {
-    --bg: 9 13 21;
-    --fg: 237 243 252;
-    --card: 17 24 39;
-    --muted: 155 169 190;
-    --border: 44 57 79;
-    --primary: 68 148 255;
-    --primary-fg: 7 14 25;
+    --bg: rgb(3, 5, 7);
+    --fg: rgb(232, 235, 253);
+
+    --primary:    rgb(9, 80, 195);
+    --primary-fg: rgb(255, 255, 255);
+    
+    --secondary:    rgb(83, 18, 196);
+    --secondary-fg: rgb(255, 255, 255);
+    
+    --accent:    rgb(42, 217, 248);
+    --accent-fg: rgb(2, 6, 23);
+
+    --card:   rgb(10, 14, 19);
+    --muted:  rgb(148, 163, 184);
+    --border: rgb(48, 54, 61);
 }
 
-html,
-body,
-#root {
-    min-height: 100%;
-}
+@layer base {
+    * {
+        transition-property: 
+            background-color,
+            border-color,
+            color,
+            fill,
+            stroke,
+            text-decoration-color ;
+        
+        transition-duration: .25s ;
+        transition-timing-function: ease ;
+    }
 
-body {
-    background-color: rgb(var(--bg));
-    color: rgb(var(--fg));
-}
+    html, body, #root {
+        min-height: 100%;
+    }
 
-@keyframes cursor-blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+    body {
+        background-color: var(--bg);
+        color: var(--fg);
+
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
 }
 
 .cursor-blink {
@@ -45,4 +94,9 @@ body {
     margin-left: 2px;
     vertical-align: middle;
     animation: cursor-blink 1s step-end infinite;
+}
+
+.no-transitions *, 
+.no-transitions {
+    transition: none !important;
 }

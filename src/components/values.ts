@@ -1,8 +1,8 @@
 export const variants = {
-  primary: "bg-[rgb(var(--primary))] text-[rgb(var(--primary-fg))] hover:brightness-110",
-  secondary: "bg-[rgb(var(--card))] text-[rgb(var(--fg))] border border-[rgb(var(--border))] hover:bg-[rgb(var(--bg))]",
-  outline: "border border-[rgb(var(--primary))] text-[rgb(var(--primary))] hover:bg-[rgb(var(--primary))]/10",
-  ghost: "text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--bg))]"
+  primary: "bg-primary text-primary-fg hover:brightness-110",
+  secondary: "bg-card text-foreground border border-border hover:bg-bg",
+  outline: "border border-primary text-primary hover:bg-primary/10",
+  ghost: "text-muted hover:text-foreground hover:bg-bg",
 } as const
 
 export const sizes = {
