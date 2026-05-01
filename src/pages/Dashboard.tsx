@@ -33,8 +33,8 @@ export default function Dashboard() {
 
   const fetchGuilds = () => {
     request(
-      guildService.get(),
-      discordService.guilds(),
+      (signal) => guildService.get("", { signal }),
+      (signal) => discordService.guilds("", { signal }),
     )
   }
 

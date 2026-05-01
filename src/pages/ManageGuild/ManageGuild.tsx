@@ -26,7 +26,7 @@ export default function ManageGuild() {
       return
     }
 
-    request(discordService.guilds(id))
+    request((signal) => discordService.guilds(id, { signal }))
   }, [id, request])
 
   useEffect(() => {

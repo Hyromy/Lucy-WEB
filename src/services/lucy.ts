@@ -1,4 +1,5 @@
 import { api } from "./api"
+import type { AxiosRequestConfig } from "axios"
 
 import type {
   MeResponse,
@@ -18,7 +19,9 @@ const param = (id: string = "") => {
 export const healthService = {
   endpoint: API_URL + "api/health/",
 
-  check: () => api.get(healthService.endpoint),
+  check: (config?: AxiosRequestConfig) => config
+    ? api.get(healthService.endpoint, config)
+    : api.get(healthService.endpoint),
 }
 
 export const discordOAuthService = {
@@ -32,37 +35,44 @@ export const discordOAuthService = {
 export const authService = {
   endpoint: API_URL + "auth/",
 
-  logout: () => api.post(authService.endpoint + "logout/"),
+  logout: (config?: AxiosRequestConfig) => config
+    ? api.post(authService.endpoint + "logout/", undefined, config)
+    : api.post(authService.endpoint + "logout/"),
 }
 
 export const discordService = {
   endpoint: API_URL + "discord/",
 
-  me: () =>
-    api.get<MeResponse>
-      (discordService.endpoint + "me/"),
+  me: (config?: AxiosRequestConfig) =>
+    config
+      ? api.get<MeResponse>(discordService.endpoint + "me/", config)
+      : api.get<MeResponse>(discordService.endpoint + "me/"),
   
-  guilds: (id: string = "") => 
-    api.get<GuildResponse | GuildResponse[]>
-      (`${discordService.endpoint}guilds/${param(id)}`),
+  guilds: (id: string = "", config?: AxiosRequestConfig) => 
+    config
+      ? api.get<GuildResponse | GuildResponse[]>(`${discordService.endpoint}guilds/${param(id)}`, config)
+      : api.get<GuildResponse | GuildResponse[]>(`${discordService.endpoint}guilds/${param(id)}`),
 }
 
 export const guildService = {
   endpoint: API_URL + "api/guilds/",
 
-  get: (id: string = "") =>
-    api.get<LucyGuildResponse | LucyGuildResponse[]>
-      (`${guildService.endpoint}${param(id)}`),
+  get: (id: string = "", config?: AxiosRequestConfig) =>
+    config
+      ? api.get<LucyGuildResponse | LucyGuildResponse[]>(`${guildService.endpoint}${param(id)}`, config)
+      : api.get<LucyGuildResponse | LucyGuildResponse[]>(`${guildService.endpoint}${param(id)}`),
 
-  update: (id: string, data: Partial<LucyGuildResponse>) =>
-    api.patch<LucyGuildResponse>
-      (`${guildService.endpoint}${param(id)}`, data),
+  update: (id: string, data: Partial<LucyGuildResponse>, config?: AxiosRequestConfig) =>
+    config
+      ? api.patch<LucyGuildResponse>(`${guildService.endpoint}${param(id)}`, data, config)
+      : api.patch<LucyGuildResponse>(`${guildService.endpoint}${param(id)}`, data),
 }
 
 export const langService = {
   endpoint: API_URL + "api/langs/",
 
-  get: () =>
-    api.get<LangResponse[]>
-      (langService.endpoint),
+  get: (config?: AxiosRequestConfig) =>
+    config
+      ? api.get<LangResponse[]>(langService.endpoint, config)
+      : api.get<LangResponse[]>(langService.endpoint),
 }

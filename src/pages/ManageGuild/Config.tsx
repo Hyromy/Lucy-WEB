@@ -35,8 +35,8 @@ export default function Config() {
     if (!dataContext?.id) return
 
     request(
-      guildService.get(dataContext.id),
-      langService.get(),
+      (signal) => guildService.get(dataContext.id, { signal }),
+      (signal) => langService.get({ signal }),
     )
   }, [dataContext, request])
 
@@ -72,7 +72,7 @@ export default function Config() {
 
   const onSubmitHandler = (formData: FormExpectedData) => {
     requestUpdate(
-      guildService.update(dataContext!.id, formData as unknown as Partial<LucyGuildResponse>),
+      (signal) => guildService.update(dataContext!.id, formData as unknown as Partial<LucyGuildResponse>, { signal }),
     )
   }
 
